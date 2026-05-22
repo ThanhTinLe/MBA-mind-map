@@ -1,0 +1,2705 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khung Chương Trình MBA - Mindmap Tương Tác</title>
+  
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- D3.js -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #0b0f19;
+      --bg-panel: rgba(17, 24, 39, 0.75);
+      --bg-panel-solid: #111827;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-color-glow: rgba(255, 255, 255, 0.15);
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      
+      /* HSL Hues for branches */
+      --hue-root: 260;      /* Violet */
+      --hue-hk1: 240;       /* Indigo */
+      --hue-hk2: 190;       /* Cyan */
+      --hue-hk3: 150;       /* Emerald/Green */
+      --hue-hk4: 35;        /* Amber/Orange */
+      --hue-other: 340;     /* Rose */
+      
+      --color-root: hsl(var(--hue-root), 85%, 60%);
+      --color-hk1:  hsl(var(--hue-hk1),  85%, 60%);
+      --color-hk2:  hsl(var(--hue-hk2),  85%, 55%);
+      --color-hk3:  hsl(var(--hue-hk3),  85%, 50%);
+      --color-hk4:  hsl(var(--hue-hk4),  85%, 55%);
+      --color-other: hsl(var(--hue-other), 85%, 60%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+    }
+
+    /* Grid Background Pattern */
+    .grid-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* App Container Layout */
+    .app-container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Left Sidebar */
+    .sidebar-left {
+      width: 320px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(16px);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      z-index: 10;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .brand-section {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #a78bfa, #6366f1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* Search & Filters */
+    .search-section {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .search-box {
+      position: relative;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 40px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #818cf8;
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .search-stats {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Legend / Guides */
+    .legend-section {
+      padding: 20px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+    }
+
+    .legend-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .legend-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-primary);
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    /* File Import Dropzone */
+    .import-section {
+      padding: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .dropzone {
+      border: 1px dashed var(--border-color);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .dropzone:hover {
+      border-color: #818cf8;
+      background: rgba(129, 140, 248, 0.05);
+    }
+
+    .dropzone i {
+      font-size: 1.5rem;
+      color: #818cf8;
+      margin-bottom: 8px;
+    }
+
+    .dropzone p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .dropzone span {
+      display: block;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Canvas / Mindmap Area */
+    .mindmap-canvas {
+      flex-grow: 1;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      cursor: grab;
+    }
+
+    .mindmap-canvas:active {
+      cursor: grabbing;
+    }
+
+    /* Control Panel overlays on canvas */
+    .control-panel {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      display: flex;
+      gap: 8px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      padding: 6px;
+      border-radius: 10px;
+      z-index: 5;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    .control-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #818cf8;
+    }
+
+    .control-btn:active {
+      transform: scale(0.95);
+    }
+
+    .control-divider {
+      width: 1px;
+      background: var(--border-color);
+      margin: 4px 2px;
+    }
+
+    /* Right Details Panel */
+    .sidebar-right {
+      width: 380px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(16px);
+      border-left: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      z-index: 10;
+      position: absolute;
+      right: 0;
+      top: 0;
+      transform: translateX(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .sidebar-right.active {
+      transform: translateX(0);
+    }
+
+    .details-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .details-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .details-content {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .details-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .details-card-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+    }
+
+    .node-full-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .node-meta-item {
+      display: flex;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .node-meta-label {
+      color: var(--text-muted);
+      min-width: 80px;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.02);
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .breadcrumb-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .breadcrumb-item:not(:last-child)::after {
+      content: "\f105";
+      font-family: "Font Awesome 6 Free";
+      font-weight: 900;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-left: 2px;
+    }
+
+    .drive-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .drive-btn:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .drive-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Subtopics / Child List in details */
+    .subtopics-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .subtopic-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .subtopic-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-color-glow);
+      padding-left: 18px;
+    }
+
+    /* SVG Elements Styling */
+    .link {
+      fill: none;
+      stroke-opacity: 0.35;
+      stroke-width: 1.5px;
+      transition: stroke-opacity 0.25s, stroke-width 0.25s, stroke 0.25s;
+    }
+
+    .link.highlighted {
+      stroke-opacity: 0.85 !important;
+      stroke-width: 3px !important;
+      filter: drop-shadow(0 0 6px var(--glow-color));
+    }
+
+    .link.search-highlighted {
+      stroke: #818cf8 !important;
+      stroke-opacity: 0.95 !important;
+      stroke-width: 3px !important;
+    }
+
+    /* HTML Node inside SVG styling */
+    .node-foreign-object {
+      overflow: visible;
+    }
+
+    .mindmap-node-card {
+      width: 240px;
+      height: 70px;
+      background: rgba(13, 18, 30, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s, background-color 0.25s;
+      box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.4);
+      user-select: none;
+    }
+
+    .mindmap-node-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-color);
+      box-shadow: 0 10px 20px -8px var(--shadow-color);
+      background: rgba(20, 26, 42, 0.95);
+    }
+
+    .mindmap-node-card.active {
+      border-color: var(--accent-color) !important;
+      box-shadow: 0 0 14px -2px var(--shadow-color);
+      background: rgba(26, 33, 54, 0.98);
+    }
+
+    .mindmap-node-card.search-match {
+      border-color: #818cf8 !important;
+      animation: pulse-glow 2s infinite;
+    }
+
+    @keyframes pulse-glow {
+      0% { box-shadow: 0 0 4px rgba(129, 140, 248, 0.4); }
+      50% { box-shadow: 0 0 16px rgba(129, 140, 248, 0.8); }
+      100% { box-shadow: 0 0 4px rgba(129, 140, 248, 0.4); }
+    }
+
+    /* Left accent line in card */
+    .card-accent {
+      position: absolute;
+      top: 10px;
+      bottom: 10px;
+      left: 0;
+      width: 4px;
+      border-radius: 0 3px 3px 0;
+      background-color: var(--accent-color);
+      box-shadow: 0 0 6px var(--accent-color);
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      font-weight: 500;
+      line-height: 1.35;
+      color: var(--text-primary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-left: 4px;
+    }
+
+    /* Toggle Expand/Collapse Circle */
+    .node-toggle-btn {
+      position: absolute;
+      right: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #1e293b;
+      border: 1.5px solid var(--accent-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s;
+    }
+
+    .node-toggle-btn:hover {
+      background: var(--accent-color);
+      color: #0b0f19;
+      transform: translateY(-50%) scale(1.15);
+    }
+
+    /* Link indicator */
+    .card-link-icon {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 0.65rem;
+      color: #10b981;
+    }
+
+    /* Depth badges in card */
+    .card-badge {
+      font-size: 0.62rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--accent-color);
+      margin-bottom: 2px;
+      padding-left: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Upload Landing Overlay */
+    .landing-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      transition: opacity 0.4s ease;
+    }
+
+    .landing-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .landing-card {
+      width: 460px;
+      background: rgba(17, 24, 39, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 40px 32px;
+      text-align: center;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .landing-icon {
+      font-size: 3rem;
+      background: linear-gradient(135deg, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+    }
+
+    .landing-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .landing-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .landing-dropzone {
+      border: 2px dashed rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      padding: 30px 20px;
+      background: rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 20px;
+    }
+
+    .landing-dropzone:hover {
+      border-color: #818cf8;
+      background: rgba(129, 140, 248, 0.05);
+    }
+
+    .landing-dropzone i {
+      font-size: 2rem;
+      color: #818cf8;
+      margin-bottom: 12px;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-solid {
+      background: #818cf8;
+      color: white;
+      box-shadow: 0 4px 12px rgba(129, 140, 248, 0.25);
+    }
+
+    .btn-solid:hover {
+      background: #6366f1;
+      box-shadow: 0 6px 16px rgba(129, 140, 248, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-primary);
+      margin-top: 10px;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Help & Shortcuts Tooltip button */
+    .help-btn {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+      transition: all 0.2s;
+    }
+
+    .help-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--border-color-glow);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Help Modal */
+    .help-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .help-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .help-modal-card {
+      width: 500px;
+      background: var(--bg-panel-solid);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    .help-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .help-modal-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .shortcut-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .shortcut-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+    }
+
+    .shortcut-desc {
+      color: var(--text-secondary);
+    }
+
+    .shortcut-keys {
+      display: flex;
+      gap: 4px;
+    }
+
+    .key {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      box-shadow: 0 2px 0 #111827;
+    }
+
+    /* Loader */
+    .loader {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #818cf8;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fullscreen Loading / Landing Dropzone Overlay -->
+  <div class="landing-overlay" id="landingOverlay">
+    <div class="landing-card">
+      <div class="landing-icon">
+        <i class="fa-solid fa-sitemap"></i>
+      </div>
+      <h2 class="landing-title">Khung Chương Trình MBA</h2>
+      <p class="landing-desc" id="landingDesc">Đang tải cấu trúc chương trình học tập...</p>
+      
+      <div id="loaderContainer">
+        <div class="loader"></div>
+      </div>
+
+      <div id="uploadContainer" style="display: none;">
+        <div class="landing-dropzone" id="landingDropzone">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <p>Kéo & thả file <b>semba_mba_khung.json</b> vào đây</p>
+          <span>Hoặc click để chọn file từ máy tính</span>
+          <input type="file" id="fileInput" accept=".json" style="display: none;">
+        </div>
+        <button class="primary-btn btn-solid" id="demoBtn">Sử dụng dữ liệu mẫu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help & Shortcuts Modal -->
+  <div class="help-modal" id="helpModal">
+    <div class="help-modal-card">
+      <div class="help-modal-header">
+        <h3 class="help-modal-title">Hướng dẫn & Phím tắt</h3>
+        <button class="close-btn" id="closeHelpBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="shortcut-list">
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Di chuyển bản đồ</span>
+          <div class="shortcut-keys"><span class="key">Kéo chuột trái</span></div>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Phóng to / Thu nhỏ</span>
+          <div class="shortcut-keys"><span class="key">Cuộn chuột</span> hoặc <span class="key">+</span> / <span class="key">-</span></div>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Đóng/Mở nhánh</span>
+          <div class="shortcut-keys"><span class="key">Click vào nút tròn ở rìa node</span></div>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Xem chi tiết khóa học</span>
+          <div class="shortcut-keys"><span class="key">Click vào thân Node</span></div>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Tìm kiếm nhanh</span>
+          <div class="shortcut-keys"><span class="key">Ctrl</span> + <span class="key">F</span></div>
+        </div>
+        <div class="shortcut-row">
+          <span class="shortcut-desc">Khôi phục góc nhìn mặc định</span>
+          <div class="shortcut-keys"><span class="key">Escape</span></div>
+        </div>
+      </div>
+      <button class="primary-btn btn-solid" id="understandBtn">Đã hiểu</button>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Grid Background -->
+    <div class="grid-bg"></div>
+
+    <!-- Help floating button -->
+    <button class="help-btn" id="helpBtn" title="Trợ giúp & Phím tắt">
+      <i class="fa-solid fa-question"></i>
+    </button>
+
+    <!-- Left Sidebar -->
+    <aside class="sidebar-left">
+      <div class="brand-section">
+        <h1 class="brand-title"><i class="fa-solid fa-graduation-cap"></i> SEMBA Hub</h1>
+        <div class="brand-subtitle">Khung chương trình MBA 2.2</div>
+      </div>
+
+      <!-- Search Section -->
+      <div class="search-section">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" class="search-input" id="searchInput" placeholder="Tìm tên môn học, học phần...">
+        </div>
+        <div class="search-stats">
+          <span id="searchResultCount">Khớp: 0 kết quả</span>
+          <span id="totalNodesCount">Môn học: 0</span>
+        </div>
+      </div>
+
+      <!-- Legend Section -->
+      <div class="legend-section">
+        <h3 class="section-title">Học kỳ & Phân nhóm</h3>
+        <div class="legend-list" id="legendList">
+          <div class="legend-item" data-target="root">
+            <span class="legend-color" style="color: var(--color-root); background-color: var(--color-root);"></span>
+            <span>Chương trình gốc</span>
+          </div>
+          <div class="legend-item" data-target="hk1">
+            <span class="legend-color" style="color: var(--color-hk1); background-color: var(--color-hk1);"></span>
+            <span>Học kỳ 1</span>
+          </div>
+          <div class="legend-item" data-target="hk2">
+            <span class="legend-color" style="color: var(--color-hk2); background-color: var(--color-hk2);"></span>
+            <span>Học kỳ 2</span>
+          </div>
+          <div class="legend-item" data-target="hk3">
+            <span class="legend-color" style="color: var(--color-hk3); background-color: var(--color-hk3);"></span>
+            <span>Học kỳ 3</span>
+          </div>
+          <div class="legend-item" data-target="hk4">
+            <span class="legend-color" style="color: var(--color-hk4); background-color: var(--color-hk4);"></span>
+            <span>Học kỳ 4</span>
+          </div>
+          <div class="legend-item" data-target="other">
+            <span class="legend-color" style="color: var(--color-other); background-color: var(--color-other);"></span>
+            <span>Học phần tự do / Khác</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Import Panel in sidebar -->
+      <div class="import-section">
+        <div class="dropzone" id="sidebarDropzone">
+          <i class="fa-solid fa-file-import"></i>
+          <p>Tải JSON mới</p>
+          <span>Kéo thả hoặc click</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Visual Canvas -->
+    <main class="mindmap-canvas" id="canvasContainer">
+      <svg id="mindmapSvg" width="100%" height="100%">
+        <!-- Define SVG filters & gradients here -->
+        <defs>
+          <!-- Gradient for links -->
+          <linearGradient id="link-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#4f46e5" stop-opacity="0.6" />
+            <stop offset="100%" stop-color="#818cf8" stop-opacity="0.3" />
+          </linearGradient>
+          
+          <!-- Drop shadows -->
+          <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.4"/>
+          </filter>
+          
+          <filter id="glow-violet" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+        
+        <!-- Base zoom group -->
+        <g id="zoomGroup">
+          <g id="linksGroup"></g>
+          <g id="nodesGroup"></g>
+        </g>
+      </svg>
+
+      <!-- Visual Control Buttons overlay -->
+      <div class="control-panel">
+        <button class="control-btn" id="zoomInBtn" title="Phóng to (Ctrl + MouseWheel)"><i class="fa-solid fa-plus"></i></button>
+        <button class="control-btn" id="zoomOutBtn" title="Thu nhỏ (Ctrl + MouseWheel)"><i class="fa-solid fa-minus"></i></button>
+        <button class="control-btn" id="zoomFitBtn" title="Căn giữa màn hình (Esc)"><i class="fa-solid fa-expand"></i></button>
+        <div class="control-divider"></div>
+        <button class="control-btn" id="expandAllBtn" title="Mở rộng tất cả"><i class="fa-solid fa-folder-open"></i></button>
+        <button class="control-btn" id="collapseAllBtn" title="Thu gọn tất cả"><i class="fa-solid fa-folder"></i></button>
+        <div class="control-divider"></div>
+        <button class="control-btn" id="exportPngBtn" title="Xuất ảnh PNG"><i class="fa-solid fa-image"></i></button>
+        <button class="control-btn" id="exportSvgBtn" title="Tải file SVG"><i class="fa-solid fa-file-code"></i></button>
+      </div>
+    </main>
+
+    <!-- Right Details Sidebar -->
+    <aside class="sidebar-right" id="sidebarRight">
+      <div class="details-header">
+        <h2 class="details-title"><i class="fa-solid fa-circle-info"></i> Chi Tiết Học Phần</h2>
+        <button class="close-btn" id="closeDetailsBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      
+      <div class="details-content">
+        <!-- Selected Node Main Info -->
+        <div class="details-card">
+          <div class="details-card-accent" id="detailsAccent"></div>
+          
+          <div class="card-badge" style="margin-bottom: 8px;">
+            <span id="detailsGroupBadge">Học kỳ 3</span>
+            <span id="detailsLevelBadge" class="key" style="box-shadow: none; font-size: 0.55rem; padding: 2px 4px;">Level 2</span>
+          </div>
+          
+          <h3 class="node-full-name" id="detailsNodeName">Đang tải dữ liệu...</h3>
+          
+          <div class="node-meta-item">
+            <span class="node-meta-label">Mã học phần:</span>
+            <span id="detailsCode">-</span>
+          </div>
+          <div class="node-meta-item">
+            <span class="node-meta-label">Nhánh cha:</span>
+            <span id="detailsParentNode">-</span>
+          </div>
+        </div>
+
+        <!-- Google Drive Links -->
+        <div id="driveLinkContainer" style="display: none;">
+          <h4 class="section-title"><i class="fa-solid fa-folder-open"></i> Tài nguyên học tập</h4>
+          <a href="#" target="_blank" class="drive-btn" id="detailsDriveLink">
+            <i class="fa-brands fa-google-drive"></i> Truy cập Google Drive
+          </a>
+        </div>
+
+        <!-- Breadcrumbs Navigation -->
+        <div>
+          <h4 class="section-title"><i class="fa-solid fa-route"></i> Lộ trình môn học</h4>
+          <div class="breadcrumbs" id="detailsBreadcrumbs">
+            <!-- Breadcrumbs items will render here -->
+          </div>
+        </div>
+
+        <!-- Subtopics List -->
+        <div id="subtopicsContainer">
+          <h4 class="section-title" id="subtopicsTitle"><i class="fa-solid fa-list-ul"></i> Học phần con (0)</h4>
+          <div class="subtopics-list" id="detailsSubtopics">
+            <!-- Subtopics will render here -->
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // Global State
+    let rawData = null;
+    let rootNode = null;
+    let currentActiveNode = null;
+    let totalNodesCount = 0;
+    
+    // D3 Configuration constants
+    const cardWidth = 240;
+    const cardHeight = 70;
+    const levelSpacing = 320;
+    const verticalSpacing = 40;
+    
+    // D3 objects
+    let svg, zoomGroup, d3Zoom, treeLayout;
+    
+    // PLACEHOLDER FOR EMBEDDED DATA
+    // The build script will inject the JSON data variable here
+    const EMBEDDED_DATA = {
+  "file": "SEMBAKhung_MBA_22_1",
+  "centralTopic": [
+    {
+      "name": "SEMBA(Khung MBA 2.2)Floating TopicHK 3Triết học trong kinh doanh Khái luận về Triết học Bản thể luậnPhép biện chứngNhận thức luận Học thuyết hình thái Kinh tế - Xã hộiTriết học chính trịÝ thức xã hộiTriết học về con người Đạo đức trong kinh doanhTổng quan về đạo đức trong kinh doanh và quản trị các bên liên quan (Stakeholder)  Các vấn đề trong đạo đức kinh doanh Thể chế hoá đạo đức kinh doanh trong doanh nghiệp Mô hình đưa ra quyết định và lãnh đạo đạo đức Thuyết đạo đức và giá trị quan (Moral physolophies and Values)Xây dựng văn hoá đạo đức trong tổ chức  Đạo đức trong các chức năng doanh nghiệp  Triển khai đạo đức trong kinh doanh  Trách nhiệm xã hội (CSR) và phát triển bền vững  Ra quyết định kinh doanh ứng dụng công nghê Tổng quan về ra quyết định trong quản trị kinh doanh  Tư duy phản biện và ra quyết định trong thời đại số:  Khai phá dữ liệu và phân tích dự đoán trong ra quyết định  Trí tuệ nhân tạo (AI) và tự động hoá trong việc ra quyết định  Ra quyết định trong môi trường không chắc chắn và rủi ro  Lãnh đạo thời kỳ chuyển đổi sốGiới thiệu về lãnh đạoLãnh đạo là gì?Các quan điểm khác nhau về lãnh đạoMô hình hành viCác nguyên tắc nền tảngHành vi lãnh đạo là gì?Điểm mạnh và điểm yếu khi áp dụngmô hình này trong tổ chứcCác phong cách lãnh đạoSự phát triển và xu hướngVăn hóa tổ chức Các yếu tố ảnh hưởng đến phong cáchlãnh đạoĐiểm mạnh và điểm yếuLãnh đạo theo tình huốngMô hình lãnh đạo của Hersey vàBlanchardCách thức hoạt động của mô hìnhThuyết thay thế lãnh đạoPhong cách lãnh đạo “Charisma’ và lãnh đạo chuyển đổiThuyết bản thân của House và ShamirThuyết quy kếtĐặc điểm của nhà lãnh đạo “charismaCác khía cạnh tiêu cực của phong cách“charisma” Lãnh đạo chuyển đổiLãnh đạo đích thực (Authentic leadership)Vai trò của lãnh đạo đích thựcPhương pháp học tập và thực hànhPseudo-authenticitySự đa dạng và lãnh đạoSự đa dạng là gì?Thuyết bản sắc xã hộiLãnh đạo và giới tínhSự đa dạng và văn hóaQuyền lực, sự ảnh hưởng, và quyền hạnQuyền lực là gì?Các dạng của quyền lựcMặt trái của quyền lựcLãnh đạo và đội nhómThuyết mô hình nhómMô hình nhóm tiêu chuẩnMô hình nhóm mô tảMô hình vai trò cá nhân của Bel BelbinBánh xe quản lý đội nhóm củaMargerison-McCannNhược điểm của đội nhómLãnh đạo và sự thay đổiTầm nhìnCách tiếp cận để thay đổiMô hình của quá trình thay đổiPhản ứng cá nhân đối với thay đổiPhát triển năng lực lãnh đạoNăng lực lãnh đạo là gì?Yếu tố tổ chứcCác nhà lãnh đạo được phát triển như thế nào?Lãnh đạo chiến lượcLãnh đạo chiến lược là gì?Sự cần thiết phải có nhà lãnh đạo chiến lượcMột nhà lãnh đạo chiến lược làm những gì'?Lãnh đạo chuyển đổi sốLãnh đạo chuyển đổi số khác lãnh đạo bìnhthường như thế nàoVì sao phải chuyển đổi số và vai trò quantrọng của lãnh đạoTrở ngại lớn nhất có thể gặp phải là gì?Mô hình lãnh đạo đã thay đổiTrích xuất lơi ích kinh doanh từ công nghệChiến lược lãnh đạo trong thời kỳ số hóaNăm phương diện cải tổ doanh nghiệp trongthời đại sốKhai thác mạng lưới khách hàng Xây dựng nền tảng kỹ thuật số và biến dữ liệuthành tài sảnXây dựng lộ trình chuyển đổi sốChuyển đổi số thành côngĐi đến đổi mới thông qua thử nghiệm nhanhCác lý thuyết và công cụ để tạo ra và làm chủcác mô hình kinh doanh đột pháĐiều chỉnh tuyên bố giá trịKinh nghiệm và bài học thực tế của các nhàlãnh đạo kỹ thuật số và những người tham giaHội thảo chuyên đề quản trị 3HK 4Khởi nghiệp và đổi mới sáng tạo trong kỷ nguyên AI  Bối cảnh của khởi nghiệp và đổi mới thời đại số  Xác định cơ hội trong khởi nghiệp và đổi mới  Tìm kiếm nguồn lực cho quá trình đổi mới  Tạo dựng dự án khởi nghiệp Mô hình kinh doanh và tạo dựng giá trị khởi nghiệp Quản trị bản thân để thành công (Seft-Management for Success) Con đường thành công Hiểu về não bộCảm xúc và bản năng Tối ưu hóa não bộ Kết nối thân tâm Bộ não thứ hai Dinh dưỡng thông minhLối sống khỏeTrình bày nhóm Sự hình thành cái tôiKế hoạch hành động Đề án tốt nghiệpThực tập: Bài tập chuẩn đoán daonh nghiệpHội thảo chuyên đề 4HK 1Quản trị Tổ chức và Nguồn nhân lực ứng dụng  AI Tổng quan hành vi tổ chức Hành vi cá nhân Hành vi nhóm Cấu trúc và văn hóa tổ chứcTổng quan về quản trị nhân sự trong kỷ nguyên AI Quản lý hiệu suấtPhát triển nguồn nhân lực Xây dựng chính sách đãi ngộ nhân sự  Phương pháp học tập và tư duy khoa học Nguyên lý và phương pháp học tập:  Chiến lược học tập và thực hành học tập hiệu quảTổng quan về tư duy khoa học cho nhà quản trị  Phân tích tình huống quản trị bằng tư duy khoa họcNghiên cứu và ứng dụng vào quản trịKinh tế học quản trịTổng quan về Kinh tế học quản trị Cầu của thị trường Sản xuất và chi phí Mô hình định giá và sản lượng Độc quyền nhóm Giới thiệu một số chủ đề mới trong kinh tế quản trị Kế toán – Tài chính cho nhà quản lý trong thời đại số  Một số khái niệm cơ bản trong kế toán và vai trò của kế toán trong quản trị tài chính doanh nghiệpBáo cáo tài chính (vai trò, chức năng và các thông tin quan trọng)Thông tin kế toán tài chính trong phân tích tài chính doanh nghiệpKế toán quản trịCác quyết định về giá (Pricing)Chi phí cận biên (Mariginal Costing) và đưa ra quyết địnhLập ngân sách (Budgets)Quản trị tài chínhPhân tích rủi roCông nghệ tài chínhỨng dụng công nghệ tài chính Triết học Hội thảo chuyên đề quản trị 1   Cách mạng công nghiệp 4.0 và sự bùng nổ của Trí tuệ nhân tạo (AI) Kinh tế Việt Nam trong thời kỳ hội nhậpHội nhập kinh tế toàn cầu  Quản trị công ty đa quốc gia Quản trị vận hành doanh nghiệp thời 4.0   Nghệ thuật lãnh đạo trong kỷ nguyên AI  Quản trị nhân sự ứng dụng công nghệ số và trí tuệ nhân tạo Khởi nghiệp và sáng tạo đổi mới trong kỷ nguyên AI Chiến lược chuyển đổi số và ứng dụng AI cho doanh nghiệp Chiến lược mua bán và sát nhập để tăng trưởng đột phá  • Xây dựng văn hóa tổ chức Mô hình kinh doanh tại những thị trường mới  Chuyển đổi mô hình kinh doanh Tương lai Marketing trong kỷ nguyên số Lãnh đạo thời kỳ chuyển đổi số  Tương lai của trí tuệ nhân tạo và ứng dụng trong quản trị  Khám phá năng lực lãnh đạo bản thânCác chuyên đề tham khảo khác  HK 2Phân tích dữ liệu kinh doanh dựa trên công nghệ và dữ liệuTổng quan về Phân tích dữ liệu kinh doanh Phân tích mô tả Suy luận thống kê Phân tích dự báo Giới thiệu về khai thác dữ liệuPhân tích đề xuất Quản lý rủi ro và ra quyết định Chiến lược doanh nghiệp dựa trên dữ liệu Quản trị Marketing và trải nghiệm khách hàng ứng dụng AI Tổng quan về quản trị Marketing trong thời đại số Nghiên cứu Marketing và dự báo nhu cầu Phát triển chiến lược và kế hoạch MarketingXây dựng tài sản thương hiệu (Brand Equity) và Branding  Chiến lược sản phẩm và giá Truyền thông tích hợp (Integrated marketing communications) và đạo đức sử dụng AI Quản trị trải nghiệm khách hàng (CX)Phân tích hành vi người tiêu dụngKhám phá “Insights” và phân đoạn thị trường Quản trị chiến lược trong kỷ nguyên số Tổng quan về chiến lược và quản trị chiến lượcPhân tích và đánh giá môi trường bên ngoài Phân tích môi trường bên trong và khả năng cạnh tranh Các loại hình chiến lược cạnh tranh tổng quát Lựa chọn chiến lượcChiến lược trong môi trường toàn cầu và đa dạng văn hoá  Xây dựng chiến lược doanh nghiệp trong kỷ nguyên AI Thực thi chiến lược Quản trị vận hành nội bộ Quản trị dự án theo chuẩn quốc tế Giới thiệu Môi trường hoạt động của dự ánVai trò của nhà quản lý dự án Quản trị tích hợp dự ánKhía cạnh cơ bản của quản lý dự ánQuản lý tiến độ hiệu quả Quản lý chi phí dự ánQuản lý chất lượngGiao tiếp hiệu quảGiải quyết các rủi roSắp xếp thứ tự ưu tiên và   quản lý hiệu quả lợi ích, kỳ vọng và nhu cầu của các bên liên quanHội thảo chuyên đề quản trị 2",
+      "link": "https://drive.google.com/drive/folders/1KAQKRnPf0jtZe1K-_lGZYnZxn_t1B8Cm?usp=sharing",
+      "children": [
+        {
+          "name": "Floating Topic"
+        },
+        {
+          "name": "HK 3Triết học trong kinh doanh Khái luận về Triết học Bản thể luậnPhép biện chứngNhận thức luận Học thuyết hình thái Kinh tế - Xã hộiTriết học chính trịÝ thức xã hộiTriết học về con người Đạo đức trong kinh doanhTổng quan về đạo đức trong kinh doanh và quản trị các bên liên quan (Stakeholder)  Các vấn đề trong đạo đức kinh doanh Thể chế hoá đạo đức kinh doanh trong doanh nghiệp Mô hình đưa ra quyết định và lãnh đạo đạo đức Thuyết đạo đức và giá trị quan (Moral physolophies and Values)Xây dựng văn hoá đạo đức trong tổ chức  Đạo đức trong các chức năng doanh nghiệp  Triển khai đạo đức trong kinh doanh  Trách nhiệm xã hội (CSR) và phát triển bền vững  Ra quyết định kinh doanh ứng dụng công nghê Tổng quan về ra quyết định trong quản trị kinh doanh  Tư duy phản biện và ra quyết định trong thời đại số:  Khai phá dữ liệu và phân tích dự đoán trong ra quyết định  Trí tuệ nhân tạo (AI) và tự động hoá trong việc ra quyết định  Ra quyết định trong môi trường không chắc chắn và rủi ro  Lãnh đạo thời kỳ chuyển đổi sốGiới thiệu về lãnh đạoLãnh đạo là gì?Các quan điểm khác nhau về lãnh đạoMô hình hành viCác nguyên tắc nền tảngHành vi lãnh đạo là gì?Điểm mạnh và điểm yếu khi áp dụngmô hình này trong tổ chứcCác phong cách lãnh đạoSự phát triển và xu hướngVăn hóa tổ chức Các yếu tố ảnh hưởng đến phong cáchlãnh đạoĐiểm mạnh và điểm yếuLãnh đạo theo tình huốngMô hình lãnh đạo của Hersey vàBlanchardCách thức hoạt động của mô hìnhThuyết thay thế lãnh đạoPhong cách lãnh đạo “Charisma’ và lãnh đạo chuyển đổiThuyết bản thân của House và ShamirThuyết quy kếtĐặc điểm của nhà lãnh đạo “charismaCác khía cạnh tiêu cực của phong cách“charisma” Lãnh đạo chuyển đổiLãnh đạo đích thực (Authentic leadership)Vai trò của lãnh đạo đích thựcPhương pháp học tập và thực hànhPseudo-authenticitySự đa dạng và lãnh đạoSự đa dạng là gì?Thuyết bản sắc xã hộiLãnh đạo và giới tínhSự đa dạng và văn hóaQuyền lực, sự ảnh hưởng, và quyền hạnQuyền lực là gì?Các dạng của quyền lựcMặt trái của quyền lựcLãnh đạo và đội nhómThuyết mô hình nhómMô hình nhóm tiêu chuẩnMô hình nhóm mô tảMô hình vai trò cá nhân của Bel BelbinBánh xe quản lý đội nhóm củaMargerison-McCannNhược điểm của đội nhómLãnh đạo và sự thay đổiTầm nhìnCách tiếp cận để thay đổiMô hình của quá trình thay đổiPhản ứng cá nhân đối với thay đổiPhát triển năng lực lãnh đạoNăng lực lãnh đạo là gì?Yếu tố tổ chứcCác nhà lãnh đạo được phát triển như thế nào?Lãnh đạo chiến lượcLãnh đạo chiến lược là gì?Sự cần thiết phải có nhà lãnh đạo chiến lượcMột nhà lãnh đạo chiến lược làm những gì'?Lãnh đạo chuyển đổi sốLãnh đạo chuyển đổi số khác lãnh đạo bìnhthường như thế nàoVì sao phải chuyển đổi số và vai trò quantrọng của lãnh đạoTrở ngại lớn nhất có thể gặp phải là gì?Mô hình lãnh đạo đã thay đổiTrích xuất lơi ích kinh doanh từ công nghệChiến lược lãnh đạo trong thời kỳ số hóaNăm phương diện cải tổ doanh nghiệp trongthời đại sốKhai thác mạng lưới khách hàng Xây dựng nền tảng kỹ thuật số và biến dữ liệuthành tài sảnXây dựng lộ trình chuyển đổi sốChuyển đổi số thành côngĐi đến đổi mới thông qua thử nghiệm nhanhCác lý thuyết và công cụ để tạo ra và làm chủcác mô hình kinh doanh đột pháĐiều chỉnh tuyên bố giá trịKinh nghiệm và bài học thực tế của các nhàlãnh đạo kỹ thuật số và những người tham giaHội thảo chuyên đề quản trị 3",
+          "link": "https://drive.google.com/drive/folders/1KAQKRnPf0jtZe1K-_lGZYnZxn_t1B8Cm?usp=sharing",
+          "children": [
+            {
+              "name": "Triết học trong kinh doanh Khái luận về Triết học Bản thể luậnPhép biện chứngNhận thức luận Học thuyết hình thái Kinh tế - Xã hộiTriết học chính trịÝ thức xã hộiTriết học về con người",
+              "children": [
+                {
+                  "name": "Khái luận về Triết học"
+                },
+                {
+                  "name": "Bản thể luận"
+                },
+                {
+                  "name": "Phép biện chứng"
+                },
+                {
+                  "name": "Nhận thức luận"
+                },
+                {
+                  "name": "Học thuyết hình thái Kinh tế - Xã hội"
+                },
+                {
+                  "name": "Triết học chính trị"
+                },
+                {
+                  "name": "Ý thức xã hội"
+                },
+                {
+                  "name": "Triết học về con người"
+                }
+              ]
+            },
+            {
+              "name": "Đạo đức trong kinh doanhTổng quan về đạo đức trong kinh doanh và quản trị các bên liên quan (Stakeholder)  Các vấn đề trong đạo đức kinh doanh Thể chế hoá đạo đức kinh doanh trong doanh nghiệp Mô hình đưa ra quyết định và lãnh đạo đạo đức Thuyết đạo đức và giá trị quan (Moral physolophies and Values)Xây dựng văn hoá đạo đức trong tổ chức  Đạo đức trong các chức năng doanh nghiệp  Triển khai đạo đức trong kinh doanh  Trách nhiệm xã hội (CSR) và phát triển bền vững",
+              "link": "https://drive.google.com/drive/folders/1KAQKRnPf0jtZe1K-_lGZYnZxn_t1B8Cm?usp=sharing",
+              "children": [
+                {
+                  "name": "Tổng quan về đạo đức trong kinh doanh và quản trị các bên liên quan (Stakeholder)"
+                },
+                {
+                  "name": "Các vấn đề trong đạo đức kinh doanh"
+                },
+                {
+                  "name": "Thể chế hoá đạo đức kinh doanh trong doanh nghiệp"
+                },
+                {
+                  "name": "Mô hình đưa ra quyết định và lãnh đạo đạo đức"
+                },
+                {
+                  "name": "Thuyết đạo đức và giá trị quan (Moral physolophies and Values)"
+                },
+                {
+                  "name": "Xây dựng văn hoá đạo đức trong tổ chức"
+                },
+                {
+                  "name": "Đạo đức trong các chức năng doanh nghiệp"
+                },
+                {
+                  "name": "Triển khai đạo đức trong kinh doanh"
+                },
+                {
+                  "name": "Trách nhiệm xã hội (CSR) và phát triển bền vững"
+                }
+              ]
+            },
+            {
+              "name": "Ra quyết định kinh doanh ứng dụng công nghê Tổng quan về ra quyết định trong quản trị kinh doanh  Tư duy phản biện và ra quyết định trong thời đại số:  Khai phá dữ liệu và phân tích dự đoán trong ra quyết định  Trí tuệ nhân tạo (AI) và tự động hoá trong việc ra quyết định  Ra quyết định trong môi trường không chắc chắn và rủi ro",
+              "link": "https://drive.google.com/drive/folders/1IHZeNH_DhrlalsYZu-d_BD3VCIVqeUCx?usp=sharing",
+              "children": [
+                {
+                  "name": "Tổng quan về ra quyết định trong quản trị kinh doanh"
+                },
+                {
+                  "name": "Tư duy phản biện và ra quyết định trong thời đại số:"
+                },
+                {
+                  "name": "Khai phá dữ liệu và phân tích dự đoán trong ra quyết định"
+                },
+                {
+                  "name": "Trí tuệ nhân tạo (AI) và tự động hoá trong việc ra quyết định"
+                },
+                {
+                  "name": "Ra quyết định trong môi trường không chắc chắn và rủi ro"
+                }
+              ]
+            },
+            {
+              "name": "Lãnh đạo thời kỳ chuyển đổi sốGiới thiệu về lãnh đạoLãnh đạo là gì?Các quan điểm khác nhau về lãnh đạoMô hình hành viCác nguyên tắc nền tảngHành vi lãnh đạo là gì?Điểm mạnh và điểm yếu khi áp dụngmô hình này trong tổ chứcCác phong cách lãnh đạoSự phát triển và xu hướngVăn hóa tổ chức Các yếu tố ảnh hưởng đến phong cáchlãnh đạoĐiểm mạnh và điểm yếuLãnh đạo theo tình huốngMô hình lãnh đạo của Hersey vàBlanchardCách thức hoạt động của mô hìnhThuyết thay thế lãnh đạoPhong cách lãnh đạo “Charisma’ và lãnh đạo chuyển đổiThuyết bản thân của House và ShamirThuyết quy kếtĐặc điểm của nhà lãnh đạo “charismaCác khía cạnh tiêu cực của phong cách“charisma” Lãnh đạo chuyển đổiLãnh đạo đích thực (Authentic leadership)Vai trò của lãnh đạo đích thựcPhương pháp học tập và thực hànhPseudo-authenticitySự đa dạng và lãnh đạoSự đa dạng là gì?Thuyết bản sắc xã hộiLãnh đạo và giới tínhSự đa dạng và văn hóaQuyền lực, sự ảnh hưởng, và quyền hạnQuyền lực là gì?Các dạng của quyền lựcMặt trái của quyền lựcLãnh đạo và đội nhómThuyết mô hình nhómMô hình nhóm tiêu chuẩnMô hình nhóm mô tảMô hình vai trò cá nhân của Bel BelbinBánh xe quản lý đội nhóm củaMargerison-McCannNhược điểm của đội nhómLãnh đạo và sự thay đổiTầm nhìnCách tiếp cận để thay đổiMô hình của quá trình thay đổiPhản ứng cá nhân đối với thay đổiPhát triển năng lực lãnh đạoNăng lực lãnh đạo là gì?Yếu tố tổ chứcCác nhà lãnh đạo được phát triển như thế nào?Lãnh đạo chiến lượcLãnh đạo chiến lược là gì?Sự cần thiết phải có nhà lãnh đạo chiến lượcMột nhà lãnh đạo chiến lược làm những gì'?Lãnh đạo chuyển đổi sốLãnh đạo chuyển đổi số khác lãnh đạo bìnhthường như thế nàoVì sao phải chuyển đổi số và vai trò quantrọng của lãnh đạoTrở ngại lớn nhất có thể gặp phải là gì?Mô hình lãnh đạo đã thay đổiTrích xuất lơi ích kinh doanh từ công nghệChiến lược lãnh đạo trong thời kỳ số hóaNăm phương diện cải tổ doanh nghiệp trongthời đại sốKhai thác mạng lưới khách hàng Xây dựng nền tảng kỹ thuật số và biến dữ liệuthành tài sảnXây dựng lộ trình chuyển đổi sốChuyển đổi số thành côngĐi đến đổi mới thông qua thử nghiệm nhanhCác lý thuyết và công cụ để tạo ra và làm chủcác mô hình kinh doanh đột pháĐiều chỉnh tuyên bố giá trịKinh nghiệm và bài học thực tế của các nhàlãnh đạo kỹ thuật số và những người tham gia",
+              "link": "https://drive.google.com/drive/folders/1eYuHc22PFo_b5vyJRyEqifUZsbDBPtfE?usp=sharing",
+              "children": [
+                {
+                  "name": "Giới thiệu về lãnh đạoLãnh đạo là gì?Các quan điểm khác nhau về lãnh đạo",
+                  "children": [
+                    {
+                      "name": "Lãnh đạo là gì?"
+                    },
+                    {
+                      "name": "Các quan điểm khác nhau về lãnh đạo"
+                    }
+                  ]
+                },
+                {
+                  "name": "Mô hình hành viCác nguyên tắc nền tảngHành vi lãnh đạo là gì?Điểm mạnh và điểm yếu khi áp dụngmô hình này trong tổ chức",
+                  "children": [
+                    {
+                      "name": "Các nguyên tắc nền tảng"
+                    },
+                    {
+                      "name": "Hành vi lãnh đạo là gì?"
+                    },
+                    {
+                      "name": "Điểm mạnh và điểm yếu khi áp dụngmô hình này trong tổ chức"
+                    }
+                  ]
+                },
+                {
+                  "name": "Các phong cách lãnh đạoSự phát triển và xu hướngVăn hóa tổ chức Các yếu tố ảnh hưởng đến phong cáchlãnh đạoĐiểm mạnh và điểm yếu",
+                  "children": [
+                    {
+                      "name": "Sự phát triển và xu hướng"
+                    },
+                    {
+                      "name": "Văn hóa tổ chức"
+                    },
+                    {
+                      "name": "Các yếu tố ảnh hưởng đến phong cáchlãnh đạo"
+                    },
+                    {
+                      "name": "Điểm mạnh và điểm yếu"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo theo tình huốngMô hình lãnh đạo của Hersey vàBlanchardCách thức hoạt động của mô hìnhThuyết thay thế lãnh đạo",
+                  "children": [
+                    {
+                      "name": "Mô hình lãnh đạo của Hersey vàBlanchard"
+                    },
+                    {
+                      "name": "Cách thức hoạt động của mô hình"
+                    },
+                    {
+                      "name": "Thuyết thay thế lãnh đạo"
+                    }
+                  ]
+                },
+                {
+                  "name": "Phong cách lãnh đạo “Charisma’ và lãnh đạo chuyển đổiThuyết bản thân của House và ShamirThuyết quy kếtĐặc điểm của nhà lãnh đạo “charismaCác khía cạnh tiêu cực của phong cách“charisma” Lãnh đạo chuyển đổi",
+                  "children": [
+                    {
+                      "name": "Thuyết bản thân của House và Shamir"
+                    },
+                    {
+                      "name": "Thuyết quy kết"
+                    },
+                    {
+                      "name": "Đặc điểm của nhà lãnh đạo “charisma"
+                    },
+                    {
+                      "name": "Các khía cạnh tiêu cực của phong cách“charisma”"
+                    },
+                    {
+                      "name": "Lãnh đạo chuyển đổi"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo đích thực (Authentic leadership)Vai trò của lãnh đạo đích thựcPhương pháp học tập và thực hànhPseudo-authenticity",
+                  "children": [
+                    {
+                      "name": "Vai trò của lãnh đạo đích thực"
+                    },
+                    {
+                      "name": "Phương pháp học tập và thực hành"
+                    },
+                    {
+                      "name": "Pseudo-authenticity"
+                    }
+                  ]
+                },
+                {
+                  "name": "Sự đa dạng và lãnh đạoSự đa dạng là gì?Thuyết bản sắc xã hộiLãnh đạo và giới tínhSự đa dạng và văn hóa",
+                  "children": [
+                    {
+                      "name": "Sự đa dạng là gì?"
+                    },
+                    {
+                      "name": "Thuyết bản sắc xã hội"
+                    },
+                    {
+                      "name": "Lãnh đạo và giới tính"
+                    },
+                    {
+                      "name": "Sự đa dạng và văn hóa"
+                    }
+                  ]
+                },
+                {
+                  "name": "Quyền lực, sự ảnh hưởng, và quyền hạnQuyền lực là gì?Các dạng của quyền lựcMặt trái của quyền lực",
+                  "children": [
+                    {
+                      "name": "Quyền lực là gì?"
+                    },
+                    {
+                      "name": "Các dạng của quyền lực"
+                    },
+                    {
+                      "name": "Mặt trái của quyền lực"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo và đội nhómThuyết mô hình nhómMô hình nhóm tiêu chuẩnMô hình nhóm mô tảMô hình vai trò cá nhân của Bel BelbinBánh xe quản lý đội nhóm củaMargerison-McCannNhược điểm của đội nhóm",
+                  "children": [
+                    {
+                      "name": "Thuyết mô hình nhóm"
+                    },
+                    {
+                      "name": "Mô hình nhóm tiêu chuẩn"
+                    },
+                    {
+                      "name": "Mô hình nhóm mô tả"
+                    },
+                    {
+                      "name": "Mô hình vai trò cá nhân của Bel Belbin"
+                    },
+                    {
+                      "name": "Bánh xe quản lý đội nhóm củaMargerison-McCann"
+                    },
+                    {
+                      "name": "Nhược điểm của đội nhóm"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo và sự thay đổiTầm nhìnCách tiếp cận để thay đổiMô hình của quá trình thay đổiPhản ứng cá nhân đối với thay đổi",
+                  "children": [
+                    {
+                      "name": "Tầm nhìn"
+                    },
+                    {
+                      "name": "Cách tiếp cận để thay đổi"
+                    },
+                    {
+                      "name": "Mô hình của quá trình thay đổi"
+                    },
+                    {
+                      "name": "Phản ứng cá nhân đối với thay đổi"
+                    }
+                  ]
+                },
+                {
+                  "name": "Phát triển năng lực lãnh đạoNăng lực lãnh đạo là gì?Yếu tố tổ chứcCác nhà lãnh đạo được phát triển như thế nào?",
+                  "children": [
+                    {
+                      "name": "Năng lực lãnh đạo là gì?"
+                    },
+                    {
+                      "name": "Yếu tố tổ chức"
+                    },
+                    {
+                      "name": "Các nhà lãnh đạo được phát triển như thế nào?"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo chiến lượcLãnh đạo chiến lược là gì?Sự cần thiết phải có nhà lãnh đạo chiến lượcMột nhà lãnh đạo chiến lược làm những gì'?",
+                  "children": [
+                    {
+                      "name": "Lãnh đạo chiến lược là gì?"
+                    },
+                    {
+                      "name": "Sự cần thiết phải có nhà lãnh đạo chiến lược"
+                    },
+                    {
+                      "name": "Một nhà lãnh đạo chiến lược làm những gì'?"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo chuyển đổi sốLãnh đạo chuyển đổi số khác lãnh đạo bìnhthường như thế nàoVì sao phải chuyển đổi số và vai trò quantrọng của lãnh đạoTrở ngại lớn nhất có thể gặp phải là gì?Mô hình lãnh đạo đã thay đổiTrích xuất lơi ích kinh doanh từ công nghệ",
+                  "children": [
+                    {
+                      "name": "Lãnh đạo chuyển đổi số khác lãnh đạo bìnhthường như thế nào"
+                    },
+                    {
+                      "name": "Vì sao phải chuyển đổi số và vai trò quantrọng của lãnh đạo"
+                    },
+                    {
+                      "name": "Trở ngại lớn nhất có thể gặp phải là gì?"
+                    },
+                    {
+                      "name": "Mô hình lãnh đạo đã thay đổi"
+                    },
+                    {
+                      "name": "Trích xuất lơi ích kinh doanh từ công nghệ"
+                    }
+                  ]
+                },
+                {
+                  "name": "Chiến lược lãnh đạo trong thời kỳ số hóaNăm phương diện cải tổ doanh nghiệp trongthời đại sốKhai thác mạng lưới khách hàng Xây dựng nền tảng kỹ thuật số và biến dữ liệuthành tài sảnXây dựng lộ trình chuyển đổi số",
+                  "children": [
+                    {
+                      "name": "Năm phương diện cải tổ doanh nghiệp trongthời đại số"
+                    },
+                    {
+                      "name": "Khai thác mạng lưới khách hàng"
+                    },
+                    {
+                      "name": "Xây dựng nền tảng kỹ thuật số và biến dữ liệuthành tài sản"
+                    },
+                    {
+                      "name": "Xây dựng lộ trình chuyển đổi số"
+                    }
+                  ]
+                },
+                {
+                  "name": "Chuyển đổi số thành côngĐi đến đổi mới thông qua thử nghiệm nhanhCác lý thuyết và công cụ để tạo ra và làm chủcác mô hình kinh doanh đột pháĐiều chỉnh tuyên bố giá trịKinh nghiệm và bài học thực tế của các nhàlãnh đạo kỹ thuật số và những người tham gia",
+                  "children": [
+                    {
+                      "name": "Đi đến đổi mới thông qua thử nghiệm nhanh"
+                    },
+                    {
+                      "name": "Các lý thuyết và công cụ để tạo ra và làm chủcác mô hình kinh doanh đột phá"
+                    },
+                    {
+                      "name": "Điều chỉnh tuyên bố giá trị"
+                    },
+                    {
+                      "name": "Kinh nghiệm và bài học thực tế của các nhàlãnh đạo kỹ thuật số và những người tham gia"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Hội thảo chuyên đề quản trị 3"
+            }
+          ]
+        },
+        {
+          "name": "HK 4Khởi nghiệp và đổi mới sáng tạo trong kỷ nguyên AI  Bối cảnh của khởi nghiệp và đổi mới thời đại số  Xác định cơ hội trong khởi nghiệp và đổi mới  Tìm kiếm nguồn lực cho quá trình đổi mới  Tạo dựng dự án khởi nghiệp Mô hình kinh doanh và tạo dựng giá trị khởi nghiệp Quản trị bản thân để thành công (Seft-Management for Success) Con đường thành công Hiểu về não bộCảm xúc và bản năng Tối ưu hóa não bộ Kết nối thân tâm Bộ não thứ hai Dinh dưỡng thông minhLối sống khỏeTrình bày nhóm Sự hình thành cái tôiKế hoạch hành động Đề án tốt nghiệpThực tập: Bài tập chuẩn đoán daonh nghiệpHội thảo chuyên đề 4",
+          "link": "https://drive.google.com/drive/folders/1zwglBDdw7yGJ6RyBQSXh-EP0X_dULj_y?usp=sharing",
+          "children": [
+            {
+              "name": "Khởi nghiệp và đổi mới sáng tạo trong kỷ nguyên AI  Bối cảnh của khởi nghiệp và đổi mới thời đại số  Xác định cơ hội trong khởi nghiệp và đổi mới  Tìm kiếm nguồn lực cho quá trình đổi mới  Tạo dựng dự án khởi nghiệp Mô hình kinh doanh và tạo dựng giá trị khởi nghiệp",
+              "link": "https://drive.google.com/drive/folders/1zwglBDdw7yGJ6RyBQSXh-EP0X_dULj_y?usp=sharing",
+              "children": [
+                {
+                  "name": "Bối cảnh của khởi nghiệp và đổi mới thời đại số"
+                },
+                {
+                  "name": "Xác định cơ hội trong khởi nghiệp và đổi mới"
+                },
+                {
+                  "name": "Tìm kiếm nguồn lực cho quá trình đổi mới"
+                },
+                {
+                  "name": "Tạo dựng dự án khởi nghiệp"
+                },
+                {
+                  "name": "Mô hình kinh doanh và tạo dựng giá trị khởi nghiệp"
+                }
+              ]
+            },
+            {
+              "name": "Quản trị bản thân để thành công (Seft-Management for Success) Con đường thành công Hiểu về não bộCảm xúc và bản năng Tối ưu hóa não bộ Kết nối thân tâm Bộ não thứ hai Dinh dưỡng thông minhLối sống khỏeTrình bày nhóm Sự hình thành cái tôiKế hoạch hành động",
+              "children": [
+                {
+                  "name": "Con đường thành công"
+                },
+                {
+                  "name": "Hiểu về não bộ"
+                },
+                {
+                  "name": "Cảm xúc và bản năng"
+                },
+                {
+                  "name": "Tối ưu hóa não bộ"
+                },
+                {
+                  "name": "Kết nối thân tâm"
+                },
+                {
+                  "name": "Bộ não thứ hai"
+                },
+                {
+                  "name": "Dinh dưỡng thông minh"
+                },
+                {
+                  "name": "Lối sống khỏe"
+                },
+                {
+                  "name": "Trình bày nhóm"
+                },
+                {
+                  "name": "Sự hình thành cái tôi"
+                },
+                {
+                  "name": "Kế hoạch hành động"
+                }
+              ]
+            },
+            {
+              "name": "Đề án tốt nghiệp",
+              "link": "https://drive.google.com/drive/folders/1626OqR_BIPkga4WPn5rEzVlm-FVSO9Bn?usp=sharing"
+            },
+            {
+              "name": "Thực tập: Bài tập chuẩn đoán daonh nghiệp"
+            },
+            {
+              "name": "Hội thảo chuyên đề 4"
+            }
+          ]
+        },
+        {
+          "name": "HK 1Quản trị Tổ chức và Nguồn nhân lực ứng dụng  AI Tổng quan hành vi tổ chức Hành vi cá nhân Hành vi nhóm Cấu trúc và văn hóa tổ chứcTổng quan về quản trị nhân sự trong kỷ nguyên AI Quản lý hiệu suấtPhát triển nguồn nhân lực Xây dựng chính sách đãi ngộ nhân sự  Phương pháp học tập và tư duy khoa học Nguyên lý và phương pháp học tập:  Chiến lược học tập và thực hành học tập hiệu quảTổng quan về tư duy khoa học cho nhà quản trị  Phân tích tình huống quản trị bằng tư duy khoa họcNghiên cứu và ứng dụng vào quản trịKinh tế học quản trịTổng quan về Kinh tế học quản trị Cầu của thị trường Sản xuất và chi phí Mô hình định giá và sản lượng Độc quyền nhóm Giới thiệu một số chủ đề mới trong kinh tế quản trị Kế toán – Tài chính cho nhà quản lý trong thời đại số  Một số khái niệm cơ bản trong kế toán và vai trò của kế toán trong quản trị tài chính doanh nghiệpBáo cáo tài chính (vai trò, chức năng và các thông tin quan trọng)Thông tin kế toán tài chính trong phân tích tài chính doanh nghiệpKế toán quản trịCác quyết định về giá (Pricing)Chi phí cận biên (Mariginal Costing) và đưa ra quyết địnhLập ngân sách (Budgets)Quản trị tài chínhPhân tích rủi roCông nghệ tài chínhỨng dụng công nghệ tài chính Triết học Hội thảo chuyên đề quản trị 1   Cách mạng công nghiệp 4.0 và sự bùng nổ của Trí tuệ nhân tạo (AI) Kinh tế Việt Nam trong thời kỳ hội nhậpHội nhập kinh tế toàn cầu  Quản trị công ty đa quốc gia Quản trị vận hành doanh nghiệp thời 4.0   Nghệ thuật lãnh đạo trong kỷ nguyên AI  Quản trị nhân sự ứng dụng công nghệ số và trí tuệ nhân tạo Khởi nghiệp và sáng tạo đổi mới trong kỷ nguyên AI Chiến lược chuyển đổi số và ứng dụng AI cho doanh nghiệp Chiến lược mua bán và sát nhập để tăng trưởng đột phá  • Xây dựng văn hóa tổ chức Mô hình kinh doanh tại những thị trường mới  Chuyển đổi mô hình kinh doanh Tương lai Marketing trong kỷ nguyên số Lãnh đạo thời kỳ chuyển đổi số  Tương lai của trí tuệ nhân tạo và ứng dụng trong quản trị  Khám phá năng lực lãnh đạo bản thânCác chuyên đề tham khảo khác",
+          "link": "https://drive.google.com/drive/folders/1nepsPiQb9ZV4skFrNtUeptnOY9FRjj6i?usp=sharing",
+          "children": [
+            {
+              "name": "Quản trị Tổ chức và Nguồn nhân lực ứng dụng  AI Tổng quan hành vi tổ chức Hành vi cá nhân Hành vi nhóm Cấu trúc và văn hóa tổ chứcTổng quan về quản trị nhân sự trong kỷ nguyên AI Quản lý hiệu suấtPhát triển nguồn nhân lực Xây dựng chính sách đãi ngộ nhân sự",
+              "link": "https://drive.google.com/drive/folders/1nepsPiQb9ZV4skFrNtUeptnOY9FRjj6i?usp=sharing",
+              "children": [
+                {
+                  "name": "Tổng quan hành vi tổ chức"
+                },
+                {
+                  "name": "Hành vi cá nhân"
+                },
+                {
+                  "name": "Hành vi nhóm"
+                },
+                {
+                  "name": "Cấu trúc và văn hóa tổ chức"
+                },
+                {
+                  "name": "Tổng quan về quản trị nhân sự"
+                },
+                {
+                  "name": "trong kỷ nguyên AI"
+                },
+                {
+                  "name": "Quản lý hiệu suất"
+                },
+                {
+                  "name": "Phát triển nguồn nhân lực"
+                },
+                {
+                  "name": "Xây dựng chính sách đãi ngộ nhân sự"
+                }
+              ]
+            },
+            {
+              "name": "Phương pháp học tập và tư duy khoa học Nguyên lý và phương pháp học tập:  Chiến lược học tập và thực hành học tập hiệu quảTổng quan về tư duy khoa học cho nhà quản trị  Phân tích tình huống quản trị bằng tư duy khoa họcNghiên cứu và ứng dụng vào quản trị",
+              "link": "https://drive.google.com/drive/folders/18R47DJgrIH3mkQH4zGNRfyBvL13XLmUV?usp=sharing",
+              "children": [
+                {
+                  "name": "Nguyên lý và phương pháp học tập:"
+                },
+                {
+                  "name": "Chiến lược học tập và thực hành học tập hiệu quả"
+                },
+                {
+                  "name": "Tổng quan về tư duy khoa học cho nhà quản trị"
+                },
+                {
+                  "name": "Phân tích tình huống quản trị bằng tư duy khoa học"
+                },
+                {
+                  "name": "Nghiên cứu và ứng dụng vào quản trị"
+                }
+              ]
+            },
+            {
+              "name": "Kinh tế học quản trịTổng quan về Kinh tế học quản trị Cầu của thị trường Sản xuất và chi phí Mô hình định giá và sản lượng Độc quyền nhóm Giới thiệu một số chủ đề mới trong kinh tế quản trị",
+              "link": "https://drive.google.com/drive/folders/11UyfXYxq-DAt1rTMEPpIRTSjJT070gcW?usp=sharing",
+              "children": [
+                {
+                  "name": "Tổng quan về Kinh tế học quản trị"
+                },
+                {
+                  "name": "Cầu của thị trường"
+                },
+                {
+                  "name": "Sản xuất và chi phí"
+                },
+                {
+                  "name": "Mô hình định giá và sản lượng"
+                },
+                {
+                  "name": "Độc quyền nhóm"
+                },
+                {
+                  "name": "Giới thiệu một số chủ đề mới trong kinh tế quản trị"
+                }
+              ]
+            },
+            {
+              "name": "Kế toán – Tài chính cho nhà quản lý trong thời đại số  Một số khái niệm cơ bản trong kế toán và vai trò của kế toán trong quản trị tài chính doanh nghiệpBáo cáo tài chính (vai trò, chức năng và các thông tin quan trọng)Thông tin kế toán tài chính trong phân tích tài chính doanh nghiệpKế toán quản trịCác quyết định về giá (Pricing)Chi phí cận biên (Mariginal Costing) và đưa ra quyết địnhLập ngân sách (Budgets)Quản trị tài chínhPhân tích rủi roCông nghệ tài chínhỨng dụng công nghệ tài chính Triết học",
+              "link": "https://drive.google.com/drive/folders/15MEFlsb81w_b72uXSeVnmM-9Ce1qRmam?usp=sharing",
+              "children": [
+                {
+                  "name": "Một số khái niệm cơ bản trong kế toán và vai trò của kế toán trong quản trị tài chính doanh nghiệp"
+                },
+                {
+                  "name": "Báo cáo tài chính (vai trò, chức năng và các thông tin quan trọng)"
+                },
+                {
+                  "name": "Thông tin kế toán tài chính trong phân tích tài chính doanh nghiệp"
+                },
+                {
+                  "name": "Kế toán quản trịCác quyết định về giá (Pricing)Chi phí cận biên (Mariginal Costing) và đưa ra quyết địnhLập ngân sách (Budgets)",
+                  "children": [
+                    {
+                      "name": "Các quyết định về giá (Pricing)"
+                    },
+                    {
+                      "name": "Chi phí cận biên (Mariginal Costing) và đưa ra quyết định"
+                    },
+                    {
+                      "name": "Lập ngân sách (Budgets)"
+                    }
+                  ]
+                },
+                {
+                  "name": "Quản trị tài chính"
+                },
+                {
+                  "name": "Phân tích rủi ro"
+                },
+                {
+                  "name": "Công nghệ tài chính"
+                },
+                {
+                  "name": "Ứng dụng công nghệ tài chính"
+                },
+                {
+                  "name": "Triết học"
+                }
+              ]
+            },
+            {
+              "name": "Hội thảo chuyên đề quản trị 1   Cách mạng công nghiệp 4.0 và sự bùng nổ của Trí tuệ nhân tạo (AI) Kinh tế Việt Nam trong thời kỳ hội nhậpHội nhập kinh tế toàn cầu  Quản trị công ty đa quốc gia Quản trị vận hành doanh nghiệp thời 4.0   Nghệ thuật lãnh đạo trong kỷ nguyên AI  Quản trị nhân sự ứng dụng công nghệ số và trí tuệ nhân tạo Khởi nghiệp và sáng tạo đổi mới trong kỷ nguyên AI Chiến lược chuyển đổi số và ứng dụng AI cho doanh nghiệp Chiến lược mua bán và sát nhập để tăng trưởng đột phá  • Xây dựng văn hóa tổ chức Mô hình kinh doanh tại những thị trường mới  Chuyển đổi mô hình kinh doanh Tương lai Marketing trong kỷ nguyên số Lãnh đạo thời kỳ chuyển đổi số  Tương lai của trí tuệ nhân tạo và ứng dụng trong quản trị  Khám phá năng lực lãnh đạo bản thânCác chuyên đề tham khảo khác",
+              "children": [
+                {
+                  "name": "Cách mạng công nghiệp 4.0 và sự bùng nổ của Trí tuệ nhân tạo (AI)"
+                },
+                {
+                  "name": "Kinh tế Việt Nam trong thời kỳ hội nhập"
+                },
+                {
+                  "name": "Hội nhập kinh tế toàn cầu"
+                },
+                {
+                  "name": "Quản trị công ty đa quốc gia"
+                },
+                {
+                  "name": "Quản trị vận hành doanh nghiệp thời 4.0"
+                },
+                {
+                  "name": "Nghệ thuật lãnh đạo trong kỷ nguyên AI"
+                },
+                {
+                  "name": "Quản trị nhân sự ứng dụng công nghệ số và trí tuệ nhân tạo"
+                },
+                {
+                  "name": "Khởi nghiệp và sáng tạo đổi mới trong kỷ nguyên AI"
+                },
+                {
+                  "name": "Chiến lược chuyển đổi số và ứng dụng AI cho doanh nghiệp"
+                },
+                {
+                  "name": "Chiến lược mua bán và sát nhập để tăng trưởng đột phá"
+                },
+                {
+                  "name": "• Xây dựng văn hóa tổ chức"
+                },
+                {
+                  "name": "Mô hình kinh doanh tại những thị trường mới"
+                },
+                {
+                  "name": "Chuyển đổi mô hình kinh doanh"
+                },
+                {
+                  "name": "Tương lai Marketing trong kỷ nguyên số"
+                },
+                {
+                  "name": "Lãnh đạo thời kỳ chuyển đổi số"
+                },
+                {
+                  "name": "Tương lai của trí tuệ nhân tạo và ứng dụng trong quản trị"
+                },
+                {
+                  "name": "Khám phá năng lực lãnh đạo bản thân"
+                },
+                {
+                  "name": "Các chuyên đề tham khảo khác"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "HK 2Phân tích dữ liệu kinh doanh dựa trên công nghệ và dữ liệuTổng quan về Phân tích dữ liệu kinh doanh Phân tích mô tả Suy luận thống kê Phân tích dự báo Giới thiệu về khai thác dữ liệuPhân tích đề xuất Quản lý rủi ro và ra quyết định Chiến lược doanh nghiệp dựa trên dữ liệu Quản trị Marketing và trải nghiệm khách hàng ứng dụng AI Tổng quan về quản trị Marketing trong thời đại số Nghiên cứu Marketing và dự báo nhu cầu Phát triển chiến lược và kế hoạch MarketingXây dựng tài sản thương hiệu (Brand Equity) và Branding  Chiến lược sản phẩm và giá Truyền thông tích hợp (Integrated marketing communications) và đạo đức sử dụng AI Quản trị trải nghiệm khách hàng (CX)Phân tích hành vi người tiêu dụngKhám phá “Insights” và phân đoạn thị trường Quản trị chiến lược trong kỷ nguyên số Tổng quan về chiến lược và quản trị chiến lượcPhân tích và đánh giá môi trường bên ngoài Phân tích môi trường bên trong và khả năng cạnh tranh Các loại hình chiến lược cạnh tranh tổng quát Lựa chọn chiến lượcChiến lược trong môi trường toàn cầu và đa dạng văn hoá  Xây dựng chiến lược doanh nghiệp trong kỷ nguyên AI Thực thi chiến lược Quản trị vận hành nội bộ Quản trị dự án theo chuẩn quốc tế Giới thiệu Môi trường hoạt động của dự ánVai trò của nhà quản lý dự án Quản trị tích hợp dự ánKhía cạnh cơ bản của quản lý dự ánQuản lý tiến độ hiệu quả Quản lý chi phí dự ánQuản lý chất lượngGiao tiếp hiệu quảGiải quyết các rủi roSắp xếp thứ tự ưu tiên và   quản lý hiệu quả lợi ích, kỳ vọng và nhu cầu của các bên liên quanHội thảo chuyên đề quản trị 2",
+          "link": "https://drive.google.com/drive/folders/1mEzNGhvVEcM4o8E9q38oqqZ20yHQsYMS?usp=sharing",
+          "children": [
+            {
+              "name": "Phân tích dữ liệu kinh doanh dựa trên công nghệ và dữ liệuTổng quan về Phân tích dữ liệu kinh doanh Phân tích mô tả Suy luận thống kê Phân tích dự báo Giới thiệu về khai thác dữ liệuPhân tích đề xuất Quản lý rủi ro và ra quyết định Chiến lược doanh nghiệp dựa trên dữ liệu",
+              "link": "https://drive.google.com/drive/folders/1mEzNGhvVEcM4o8E9q38oqqZ20yHQsYMS?usp=sharing",
+              "children": [
+                {
+                  "name": "Tổng quan về Phân tích dữ liệu kinh doanh"
+                },
+                {
+                  "name": "Phân tích mô tả"
+                },
+                {
+                  "name": "Suy luận thống kê"
+                },
+                {
+                  "name": "Phân tích dự báo"
+                },
+                {
+                  "name": "Giới thiệu về khai thác dữ liệu"
+                },
+                {
+                  "name": "Phân tích đề xuất"
+                },
+                {
+                  "name": "Quản lý rủi ro và ra quyết định"
+                },
+                {
+                  "name": "Chiến lược doanh nghiệp dựa trên dữ liệu"
+                }
+              ]
+            },
+            {
+              "name": "Quản trị Marketing và trải nghiệm khách hàng ứng dụng AI Tổng quan về quản trị Marketing trong thời đại số Nghiên cứu Marketing và dự báo nhu cầu Phát triển chiến lược và kế hoạch MarketingXây dựng tài sản thương hiệu (Brand Equity) và Branding  Chiến lược sản phẩm và giá Truyền thông tích hợp (Integrated marketing communications) và đạo đức sử dụng AI Quản trị trải nghiệm khách hàng (CX)Phân tích hành vi người tiêu dụngKhám phá “Insights” và phân đoạn thị trường",
+              "link": "https://drive.google.com/drive/folders/1a8KJqL4MKA8X4r8Wx_0SVDS9YN6-TRlK?usp=sharing",
+              "children": [
+                {
+                  "name": "Tổng quan về quản trị Marketing trong thời đại số"
+                },
+                {
+                  "name": "Nghiên cứu Marketing và dự báo nhu cầu"
+                },
+                {
+                  "name": "Phát triển chiến lược và kế hoạch Marketing"
+                },
+                {
+                  "name": "Xây dựng tài sản thương hiệu (Brand Equity) và Branding"
+                },
+                {
+                  "name": "Chiến lược sản phẩm và giá"
+                },
+                {
+                  "name": "Truyền thông tích hợp (Integrated marketing communications) và đạo đức sử dụng AI"
+                },
+                {
+                  "name": "Quản trị trải nghiệm khách hàng (CX)"
+                },
+                {
+                  "name": "Phân tích hành vi người tiêu dụng"
+                },
+                {
+                  "name": "Khám phá “Insights” và phân đoạn thị trường"
+                }
+              ]
+            },
+            {
+              "name": "Quản trị chiến lược trong kỷ nguyên số Tổng quan về chiến lược và quản trị chiến lượcPhân tích và đánh giá môi trường bên ngoài Phân tích môi trường bên trong và khả năng cạnh tranh Các loại hình chiến lược cạnh tranh tổng quát Lựa chọn chiến lượcChiến lược trong môi trường toàn cầu và đa dạng văn hoá  Xây dựng chiến lược doanh nghiệp trong kỷ nguyên AI Thực thi chiến lược Quản trị vận hành nội bộ",
+              "link": "https://drive.google.com/drive/folders/1RAgnpBDashZmsvEeXuJhMPRqgea88LoZ?usp=sharing",
+              "children": [
+                {
+                  "name": "Tổng quan về chiến lược và quản trị chiến lược"
+                },
+                {
+                  "name": "Phân tích và đánh giá môi trường bên ngoài"
+                },
+                {
+                  "name": "Phân tích môi trường bên trong và khả năng cạnh tranh"
+                },
+                {
+                  "name": "Các loại hình chiến lược cạnh tranh tổng quát"
+                },
+                {
+                  "name": "Lựa chọn chiến lược"
+                },
+                {
+                  "name": "Chiến lược trong môi trường toàn cầu và đa dạng văn hoá"
+                },
+                {
+                  "name": "Xây dựng chiến lược doanh nghiệp trong kỷ nguyên AI"
+                },
+                {
+                  "name": "Thực thi chiến lược"
+                },
+                {
+                  "name": "Quản trị vận hành nội bộ"
+                }
+              ]
+            },
+            {
+              "name": "Quản trị dự án theo chuẩn quốc tế Giới thiệu Môi trường hoạt động của dự ánVai trò của nhà quản lý dự án Quản trị tích hợp dự ánKhía cạnh cơ bản của quản lý dự ánQuản lý tiến độ hiệu quả Quản lý chi phí dự ánQuản lý chất lượngGiao tiếp hiệu quảGiải quyết các rủi roSắp xếp thứ tự ưu tiên và   quản lý hiệu quả lợi ích, kỳ vọng và nhu cầu của các bên liên quan",
+              "link": "https://drive.google.com/drive/folders/1uj1OV-anX0JmDaq5REd-22-e8xTuzAbD?usp=sharing",
+              "children": [
+                {
+                  "name": "Giới thiệu"
+                },
+                {
+                  "name": "Môi trường hoạt động của dự án"
+                },
+                {
+                  "name": "Vai trò của nhà quản lý dự án"
+                },
+                {
+                  "name": "Quản trị tích hợp dự án"
+                },
+                {
+                  "name": "Khía cạnh cơ bản của quản lý dự án"
+                },
+                {
+                  "name": "Quản lý tiến độ hiệu quả"
+                },
+                {
+                  "name": "Quản lý chi phí dự án"
+                },
+                {
+                  "name": "Quản lý chất lượng"
+                },
+                {
+                  "name": "Giao tiếp hiệu quả"
+                },
+                {
+                  "name": "Giải quyết các rủi ro"
+                },
+                {
+                  "name": "Sắp xếp thứ tự ưu tiên và   quản lý hiệu quả lợi ích, kỳ vọng và nhu cầu của các bên liên quan"
+                }
+              ]
+            },
+            {
+              "name": "Hội thảo chuyên đề quản trị 2"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+    // Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      initD3();
+      setupEventListeners();
+      
+      // Attempt to load embedded data or fetch
+      if (typeof EMBEDDED_DATA !== 'undefined' && EMBEDDED_DATA) {
+        console.log("Loading embedded data...");
+        loadData(EMBEDDED_DATA);
+      } else {
+        // Fetch from local folder
+        fetch('semba_mba_khung.json')
+          .then(res => {
+            if (!res.ok) throw new Error("Fetch failed");
+            return res.json();
+          })
+          .then(data => {
+            console.log("Fetched local json successfully");
+            loadData(data);
+          })
+          .catch(err => {
+            console.warn("Could not fetch local JSON, showing file picker option.", err);
+            // Hide loader and show upload container
+            document.getElementById('loaderContainer').style.display = 'none';
+            document.getElementById('landingDesc').innerText = 'Không thể tự động tải file dữ liệu JSON. Vui lòng chọn file trong thư mục dự án.';
+            document.getElementById('uploadContainer').style.display = 'block';
+          });
+      }
+    });
+
+    // Color mapper based on semesters and names
+    function getNodeGroup(d) {
+      if (d.depth === 0) return 'root';
+      
+      // Traverse up to level 1 parent
+      let p = d;
+      while (p.depth > 1) {
+        p = p.parent;
+      }
+      
+      const name = p.data.name || "";
+      if (name.includes("HK 1") || name.includes("Học kỳ 1")) return 'hk1';
+      if (name.includes("HK 2") || name.includes("Học kỳ 2")) return 'hk2';
+      if (name.includes("HK 3") || name.includes("Học kỳ 3")) return 'hk3';
+      if (name.includes("HK 4") || name.includes("Học kỳ 4")) return 'hk4';
+      if (name.includes("Floating") || name.includes("Tự do")) return 'other';
+      return 'other';
+    }
+
+    function getGroupColor(group) {
+      switch (group) {
+        case 'root': return 'var(--color-root)';
+        case 'hk1': return 'var(--color-hk1)';
+        case 'hk2': return 'var(--color-hk2)';
+        case 'hk3': return 'var(--color-hk3)';
+        case 'hk4': return 'var(--color-hk4)';
+        default: return 'var(--color-other)';
+      }
+    }
+
+    function getGroupName(group) {
+      switch (group) {
+        case 'root': return 'Môn học gốc';
+        case 'hk1': return 'Học kỳ 1';
+        case 'hk2': return 'Học kỳ 2';
+        case 'hk3': return 'Học kỳ 3';
+        case 'hk4': return 'Học kỳ 4';
+        default: return 'Khác / Floating';
+      }
+    }
+
+    // Dynamic clean text for node display to prevent massive text blocks in cards
+    function getCleanNodeName(name) {
+      if (!name) return "";
+      
+      // Remove HK labels concatenations
+      const hkMatch = name.match(/^(HK\s*\d+|Học kỳ\s*\d+)/i);
+      if (hkMatch) {
+        const hkLabel = hkMatch[1];
+        let remaining = name.substring(hkMatch[0].length).trim();
+        if (remaining) {
+          // If remaining is extremely long, truncate it
+          if (remaining.length > 40) {
+            remaining = remaining.substring(0, 37) + "...";
+          }
+          return `${hkLabel}: ${remaining}`;
+        }
+        return hkLabel;
+      }
+      
+      if (name.length > 55) {
+        return name.substring(0, 52) + "...";
+      }
+      
+      return name;
+    }
+
+    // D3 Canvas Setup
+    function initD3() {
+      svg = d3.select("#mindmapSvg");
+      zoomGroup = d3.select("#zoomGroup");
+      
+      // Tree layout configuration
+      treeLayout = d3.tree()
+        .nodeSize([cardHeight + verticalSpacing, levelSpacing]);
+
+      // Zoom configuration
+      d3Zoom = d3.zoom()
+        .scaleExtent([0.1, 3])
+        .on("zoom", (event) => {
+          zoomGroup.attr("transform", event.transform);
+        });
+        
+      svg.call(d3Zoom);
+      
+      // Disable double click zoom so double clicks can be custom handled
+      svg.on("dblclick.zoom", null);
+    }
+
+    // Process and load JSON data
+    function loadData(data) {
+      rawData = data;
+      
+      // Translate the semba_mba_khung JSON format to standard hierarchical structure
+      // Format: { file: "...", centralTopic: [ { name: "...", children: [...] } ] }
+      let hierarchicalData = null;
+      if (data.centralTopic && Array.isArray(data.centralTopic) && data.centralTopic.length > 0) {
+        hierarchicalData = data.centralTopic[0];
+      } else {
+        hierarchicalData = data; // Fallback if direct tree structure
+      }
+
+      if (!hierarchicalData) {
+        alert("Cấu trúc file JSON không đúng. Vui lòng kiểm tra lại.");
+        return;
+      }
+
+      // Hide landing overlay
+      document.getElementById('landingOverlay').classList.add('hidden');
+
+      // Initialize hierarchy
+      rootNode = d3.hierarchy(hierarchicalData);
+      rootNode.x0 = svg.node().getBoundingClientRect().height / 2;
+      rootNode.y0 = 100;
+
+      // Collapse nodes deeper than Level 2 by default to keep clean initial look
+      // Level 0: root, Level 1: Semesters, Level 2: Courses
+      rootNode.descendants().forEach(d => {
+        if (d.depth >= 2) {
+          collapseNode(d);
+        }
+      });
+
+      // Calculate total nodes
+      totalNodesCount = rootNode.descendants().length;
+      document.getElementById('totalNodesCount').innerText = `Tổng số học phần: ${totalNodesCount}`;
+
+      // Perform initial render
+      updateMindmap(rootNode);
+      
+      // Auto Center view on root
+      zoomToFit();
+    }
+
+    // Helper functions for collapse/expand state
+    function collapseNode(d) {
+      if (d.children) {
+        d._children = d.children;
+        d.children = null;
+      }
+    }
+
+    function expandNode(d) {
+      if (d._children) {
+        d.children = d._children;
+        d._children = null;
+      }
+    }
+
+    function toggleNode(d) {
+      if (d.children) {
+        collapseNode(d);
+      } else {
+        expandNode(d);
+      }
+    }
+
+    // Main Mindmap rendering function
+    function updateMindmap(source) {
+      // 1. Calculate the new tree layout layout
+      const treeData = treeLayout(rootNode);
+      const nodes = treeData.descendants();
+      const links = treeData.links();
+
+      // Normalize depth Y coordinate (horizontal layout direction)
+      nodes.forEach(d => {
+        d.y = d.depth * levelSpacing + 80;
+      });
+
+      // --- NODES SELECTION & RENDERING ---
+      const nodesGroup = d3.select("#nodesGroup");
+      
+      // Bind node data
+      const nodeSelection = nodesGroup.selectAll("g.node-container")
+        .data(nodes, d => d.id || (d.id = Math.random().toString(36).substr(2, 9)));
+
+      // Enter new nodes
+      const nodeEnter = nodeSelection.enter().append("g")
+        .attr("class", "node-container")
+        .attr("transform", d => `translate(${source.y0},${source.x0})`)
+        .style("opacity", 0);
+
+      // Render custom HTML inside SVG foreignObject
+      const fo = nodeEnter.append("foreignObject")
+        .attr("class", "node-foreign-object")
+        .attr("width", cardWidth)
+        .attr("height", cardHeight)
+        .attr("x", 0)
+        .attr("y", -cardHeight / 2);
+
+      // Node card container
+      const card = fo.append("xhtml:div")
+        .attr("class", "mindmap-node-card")
+        .style("--accent-color", d => getGroupColor(getNodeGroup(d)))
+        .style("--shadow-color", d => {
+          const color = getGroupColor(getNodeGroup(d));
+          return color.replace("var", "").trim();
+        })
+        .on("click", (event, d) => {
+          // Focus node and show details
+          selectNode(d);
+          event.stopPropagation();
+        });
+
+      // Card Left accent stripe
+      card.append("xhtml:div")
+        .attr("class", "card-accent");
+
+      // Card level and branch indicator
+      const metaRow = card.append("xhtml:div")
+        .attr("class", "card-badge");
+      
+      metaRow.append("xhtml:span")
+        .text(d => d.depth === 0 ? "Gốc" : getGroupName(getNodeGroup(d)));
+
+      metaRow.append("xhtml:span")
+        .text(d => `Lvl ${d.depth}`)
+        .style("font-size", "0.6rem")
+        .style("opacity", "0.6");
+
+      // Card Title Text
+      card.append("xhtml:div")
+        .attr("class", "card-title")
+        .attr("title", d => d.data.name)
+        .text(d => getCleanNodeName(d.data.name));
+
+      // Link Icon indicator if link exists
+      card.filter(d => d.data.link)
+        .append("xhtml:i")
+        .attr("class", "fa-solid fa-link card-link-icon")
+        .attr("title", "Có tài nguyên liên kết");
+
+      // Collapsible toggle button (+ / -)
+      const toggleBtn = nodeEnter.append("g")
+        .attr("class", "toggle-group")
+        .attr("transform", `translate(${cardWidth}, 0)`);
+        
+      toggleBtn.append("circle")
+        .attr("r", 8)
+        .attr("fill", "#1e293b")
+        .attr("stroke", d => getGroupColor(getNodeGroup(d)))
+        .attr("stroke-width", 1.5)
+        .attr("cursor", "pointer")
+        .on("click", (event, d) => {
+          toggleNode(d);
+          updateMindmap(d);
+          event.stopPropagation();
+        });
+
+      toggleBtn.append("text")
+        .attr("dy", ".3em")
+        .attr("text-anchor", "middle")
+        .attr("fill", "#f3f4f6")
+        .attr("font-size", "8px")
+        .attr("font-family", "monospace")
+        .attr("pointer-events", "none")
+        .text(d => d.children ? "−" : "+");
+
+      // Update Node positions (with transitions)
+      const nodeUpdate = nodeSelection.merge(nodeEnter);
+      
+      nodeUpdate.transition()
+        .duration(350)
+        .attr("transform", d => `translate(${d.y},${d.x})`)
+        .style("opacity", 1);
+
+      // Update interactive details in cards
+      nodeUpdate.select(".mindmap-node-card")
+        .classed("active", d => currentActiveNode && d.id === currentActiveNode.id)
+        .classed("search-match", d => d.isSearchResult);
+
+      // Update collapse/expand toggle circle characters
+      nodeUpdate.select(".toggle-group")
+        .style("display", d => (d.children || d._children) ? "block" : "none")
+        .select("text")
+        .text(d => d.children ? "−" : "+");
+
+      // Exit old nodes
+      const nodeExit = nodeSelection.exit().transition()
+        .duration(300)
+        .attr("transform", d => `translate(${source.y},${source.x})`)
+        .style("opacity", 0)
+        .remove();
+
+      // --- LINKS SELECTION & RENDERING ---
+      const linksGroup = d3.select("#linksGroup");
+      
+      // Bind links data
+      const linkSelection = linksGroup.selectAll("path.link")
+        .data(links, d => d.target.id);
+
+      // Enter new links
+      const linkEnter = linkSelection.enter().append("path")
+        .attr("class", "link")
+        .attr("stroke", d => {
+          const group = getNodeGroup(d.target);
+          return getGroupColor(group);
+        })
+        .attr("stroke-opacity", 0.25)
+        .attr("d", d => {
+          const o = {x: source.x0, y: source.y0};
+          return diagonal(o, o);
+        });
+
+      // Update link curves
+      const linkUpdate = linkSelection.merge(linkEnter);
+      
+      linkUpdate.transition()
+        .duration(350)
+        .attr("d", d => diagonal(d.source, d.target))
+        .attr("stroke", d => {
+          // Keep branch colors matching target node
+          return getGroupColor(getNodeGroup(d.target));
+        })
+        .style("stroke-width", d => d.target.isSearchResult ? "3px" : "1.5px")
+        .style("stroke-opacity", d => d.target.isSearchResult ? 0.9 : 0.3);
+
+      // Highlight links connected to search results
+      linkUpdate.classed("search-highlighted", d => d.target.isSearchResult);
+
+      // Exit old links
+      linkSelection.exit().transition()
+        .duration(300)
+        .attr("d", d => {
+          const o = {x: source.x, y: source.y};
+          return diagonal(o, o);
+        })
+        .remove();
+
+      // Store current positions for future transitions
+      nodes.forEach(d => {
+        d.x0 = d.x;
+        d.y0 = d.y;
+      });
+    }
+
+    // Bezier link path generator
+    function diagonal(s, t) {
+      // Calculate start and end offsets to align link curves with node edges
+      const startX = s.y + cardWidth;
+      const startY = s.x;
+      const endX = t.y;
+      const endY = t.x;
+      
+      return `M ${startX} ${startY}
+              C ${(startX + endX) / 2} ${startY},
+                ${(startX + endX) / 2} ${endY},
+                ${endX} ${endY}`;
+    }
+
+    // Select a node, focus on it and display sidebar details
+    function selectNode(node) {
+      currentActiveNode = node;
+      
+      // Update UI active node highlight states
+      d3.selectAll("div.mindmap-node-card").classed("active", d => d.id === node.id);
+
+      // Populate details sidebar panel
+      const sidebar = document.getElementById("sidebarRight");
+      const group = getNodeGroup(node);
+      
+      // Setup Sidebar Details
+      document.getElementById("detailsAccent").style.backgroundColor = getGroupColor(group);
+      document.getElementById("detailsGroupBadge").innerText = getGroupName(group);
+      document.getElementById("detailsGroupBadge").style.color = getGroupColor(group);
+      document.getElementById("detailsLevelBadge").innerText = `Cấp ${node.depth}`;
+      document.getElementById("detailsNodeName").innerText = node.data.name;
+      
+      // Code / ID (generate mock abbreviation code)
+      const nameWords = node.data.name.split(/\s+/).filter(w => w.length > 2);
+      const mockCode = (nameWords.map(w => w[0]).join("").toUpperCase() + "-" + node.depth).substring(0, 8);
+      document.getElementById("detailsCode").innerText = mockCode;
+      
+      // Parent name
+      document.getElementById("detailsParentNode").innerText = node.parent ? node.parent.data.name : "Không có (Gốc)";
+
+      // Drive resource links
+      const driveContainer = document.getElementById("driveLinkContainer");
+      if (node.data.link) {
+        driveContainer.style.display = "block";
+        document.getElementById("detailsDriveLink").setAttribute("href", node.data.link);
+      } else {
+        driveContainer.style.display = "none";
+      }
+
+      // Breadcrumbs
+      const breadcrumbsContainer = document.getElementById("detailsBreadcrumbs");
+      breadcrumbsContainer.innerHTML = "";
+      
+      const ancestors = node.ancestors().reverse();
+      ancestors.forEach((ancestor, index) => {
+        const item = document.createElement("span");
+        item.className = "breadcrumb-item";
+        item.innerText = getCleanNodeName(ancestor.data.name);
+        item.style.cursor = "pointer";
+        item.onclick = () => {
+          selectNode(ancestor);
+          centerOnNode(ancestor);
+        };
+        breadcrumbsContainer.appendChild(item);
+      });
+
+      // Subtopics (children list)
+      const subtopicsContainer = document.getElementById("subtopicsContainer");
+      const subtopicsList = document.getElementById("detailsSubtopics");
+      subtopicsList.innerHTML = "";
+      
+      // Fetch all children (even if currently collapsed in view)
+      const children = node.children || node._children || [];
+      document.getElementById("subtopicsTitle").innerHTML = `<i class="fa-solid fa-list-ul"></i> Môn học con (${children.length})`;
+      
+      if (children.length > 0) {
+        subtopicsContainer.style.display = "block";
+        children.forEach(child => {
+          const item = document.createElement("div");
+          item.className = "subtopic-item";
+          
+          const title = document.createElement("span");
+          title.innerText = getCleanNodeName(child.data.name);
+          title.style.fontWeight = "500";
+          item.appendChild(title);
+          
+          if (child.data.link) {
+            const linkIcon = document.createElement("i");
+            linkIcon.className = "fa-solid fa-folder-open";
+            linkIcon.style.color = "#10b981";
+            item.appendChild(linkIcon);
+          }
+          
+          item.onclick = () => {
+            // If collapsed, expand
+            if (node._children) {
+              expandNode(node);
+              updateMindmap(node);
+            }
+            selectNode(child);
+            centerOnNode(child);
+          };
+          
+          subtopicsList.appendChild(item);
+        });
+      } else {
+        subtopicsContainer.style.display = "none";
+      }
+
+      // Show Right Sidebar
+      sidebar.classList.add("active");
+    }
+
+    // Zoom and Pan helper functions
+    function zoomToFit() {
+      if (!rootNode) return;
+      
+      const bounds = zoomGroup.node().getBBox();
+      const parent = svg.node().parentElement;
+      const width = parent.clientWidth;
+      const height = parent.clientHeight;
+      
+      if (bounds.width === 0 || bounds.height === 0) return;
+      
+      const dx = bounds.width;
+      const dy = bounds.height;
+      const x = bounds.x + bounds.width / 2;
+      const y = bounds.y + bounds.height / 2;
+      
+      // Calculate scale with safety margin
+      const scale = Math.max(0.25, Math.min(1.2, 0.85 / Math.max(dx / width, dy / height)));
+      const translate = [width / 2 - scale * x, height / 2 - scale * y];
+      
+      svg.transition()
+        .duration(750)
+        .call(d3Zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
+    }
+
+    function centerOnNode(node) {
+      const parent = svg.node().parentElement;
+      const width = parent.clientWidth;
+      const height = parent.clientHeight;
+      
+      // Center the selected node card on screen
+      const targetX = node.y + (cardWidth / 2);
+      const targetY = node.x;
+      
+      // Current zoom transform scale
+      const currentScale = d3.zoomTransform(svg.node()).k;
+      
+      const translate = [
+        (width / 2) - (currentScale * targetX),
+        (height / 2) - (currentScale * targetY)
+      ];
+      
+      svg.transition()
+        .duration(600)
+        .call(d3Zoom.transform, d3.zoomIdentity.translate(translate[0], translate[1]).scale(currentScale));
+    }
+
+    // Expand all nodes recursively
+    function expandAll() {
+      if (!rootNode) return;
+      
+      function expandAllRecursive(d) {
+        expandNode(d);
+        const kids = d.children || d._children || [];
+        kids.forEach(expandAllRecursive);
+      }
+      
+      expandAllRecursive(rootNode);
+      updateMindmap(rootNode);
+      zoomToFit();
+    }
+
+    // Collapse all nodes except level 1
+    function collapseAll() {
+      if (!rootNode) return;
+      
+      rootNode.descendants().forEach(d => {
+        if (d.depth >= 1) {
+          collapseNode(d);
+        }
+      });
+      
+      updateMindmap(rootNode);
+      zoomToFit();
+    }
+
+    // Search Engine
+    function searchMindmap(query) {
+      if (!rootNode) return;
+      
+      query = query.trim().toLowerCase();
+      
+      // Clear previous search status
+      rootNode.descendants().forEach(d => {
+        d.isSearchResult = false;
+      });
+      
+      if (!query) {
+        document.getElementById("searchResultCount").innerText = "Khớp: 0 kết quả";
+        updateMindmap(rootNode);
+        return;
+      }
+      
+      let matches = [];
+      
+      // Find matches & expand parent paths
+      rootNode.descendants().forEach(d => {
+        if (d.data.name.toLowerCase().includes(query)) {
+          d.isSearchResult = true;
+          matches.push(d);
+          
+          // Expand all ancestors to make node visible
+          let p = d.parent;
+          while (p) {
+            expandNode(p);
+            p = p.parent;
+          }
+        }
+      });
+      
+      document.getElementById("searchResultCount").innerText = `Khớp: ${matches.length} kết quả`;
+      
+      // Rerender layout
+      updateMindmap(rootNode);
+      
+      // Focus/Center on first match if found
+      if (matches.length > 0) {
+        centerOnNode(matches[0]);
+        selectNode(matches[0]);
+      }
+    }
+
+    // UI Event listeners
+    function setupEventListeners() {
+      // Zoom buttons
+      document.getElementById("zoomInBtn").addEventListener("click", () => {
+        svg.transition().duration(250).call(d3Zoom.scaleBy, 1.3);
+      });
+      
+      document.getElementById("zoomOutBtn").addEventListener("click", () => {
+        svg.transition().duration(250).call(d3Zoom.scaleBy, 0.7);
+      });
+      
+      document.getElementById("zoomFitBtn").addEventListener("click", zoomToFit);
+      
+      // Collapse/Expand buttons
+      document.getElementById("expandAllBtn").addEventListener("click", expandAll);
+      document.getElementById("collapseAllBtn").addEventListener("click", collapseAll);
+      
+      // Search
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        searchMindmap(e.target.value);
+      });
+      
+      // Details sidebar close
+      document.getElementById("closeDetailsBtn").addEventListener("click", () => {
+        document.getElementById("sidebarRight").classList.remove("active");
+        currentActiveNode = null;
+        d3.selectAll("div.mindmap-node-card").classed("active", false);
+      });
+
+      // Help Modal
+      const helpModal = document.getElementById("helpModal");
+      document.getElementById("helpBtn").addEventListener("click", () => helpModal.classList.add("active"));
+      document.getElementById("closeHelpBtn").addEventListener("click", () => helpModal.classList.remove("active"));
+      document.getElementById("understandBtn").addEventListener("click", () => helpModal.classList.remove("active"));
+      
+      // Keyboard Shortcuts
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          // Close panels / reset zoom
+          helpModal.classList.remove("active");
+          document.getElementById("sidebarRight").classList.remove("active");
+          zoomToFit();
+        }
+        
+        // Ctrl + F search focus shortcut
+        if ((e.ctrlKey || e.metaKey) && e.key === "f") {
+          e.preventDefault();
+          document.getElementById("searchInput").focus();
+        }
+      });
+
+      // Legend Item clicks to search/filter
+      document.querySelectorAll(".legend-item").forEach(item => {
+        item.addEventListener("click", () => {
+          const target = item.getAttribute("data-target");
+          if (target === 'root') {
+            centerOnNode(rootNode);
+            selectNode(rootNode);
+            return;
+          }
+          
+          // Find matching HK level 1 node
+          const match = rootNode.children.find(d => {
+            const group = getNodeGroup(d);
+            return group === target;
+          });
+          
+          if (match) {
+            // Expand it
+            expandNode(match);
+            updateMindmap(rootNode);
+            centerOnNode(match);
+            selectNode(match);
+          }
+        });
+      });
+
+      // Export Buttons
+      document.getElementById("exportPngBtn").addEventListener("click", exportAsPng);
+      document.getElementById("exportSvgBtn").addEventListener("click", exportAsSvg);
+
+      // File Pickers
+      const fileInput = document.getElementById("fileInput");
+      const dropzone = document.getElementById("landingDropzone");
+      const sidebarDropzone = document.getElementById("sidebarDropzone");
+      
+      const handleFile = (file) => {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = JSON.parse(e.target.result);
+            loadData(data);
+          } catch (err) {
+            alert("Lỗi phân tích cú pháp file JSON. Vui lòng đảm bảo file JSON đúng cấu trúc.");
+          }
+        };
+        reader.readAsText(file);
+      };
+
+      fileInput.addEventListener("change", (e) => handleFile(e.target.files[0]));
+      
+      // Setup drag and drop for main landing page
+      dropzone.addEventListener("click", () => fileInput.click());
+      dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.style.borderColor = "#818cf8";
+        dropzone.style.background = "rgba(129, 140, 248, 0.1)";
+      });
+      dropzone.addEventListener("dragleave", () => {
+        dropzone.style.borderColor = "rgba(255, 255, 255, 0.15)";
+        dropzone.style.background = "rgba(0, 0, 0, 0.2)";
+      });
+      dropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        handleFile(e.dataTransfer.files[0]);
+      });
+
+      // Sidebar small uploader trigger
+      sidebarDropzone.addEventListener("click", () => fileInput.click());
+
+      // Demo data button click
+      document.getElementById("demoBtn").addEventListener("click", () => {
+        // Load mock/empty fallback structure if user wishes to browse with no local file
+        const mockFallback = {
+          file: "SEMBAKhung_MBA_Demo",
+          centralTopic: [{
+            name: "SEMBA (Khung MBA Mẫu)",
+            children: [
+              {
+                name: "Học kỳ 1",
+                children: [
+                  { name: "Quản trị Tổ chức và Nguồn nhân lực" },
+                  { name: "Kinh tế học quản trị" }
+                ]
+              },
+              {
+                name: "Học kỳ 2",
+                children: [
+                  { name: "Phân tích dữ liệu kinh doanh" },
+                  { name: "Quản trị Marketing" }
+                ]
+              }
+            ]
+          }]
+        };
+        loadData(mockFallback);
+      });
+    }
+
+    // Export SVG
+    function exportAsSvg() {
+      if (!rootNode) return;
+      const svgNode = document.getElementById("mindmapSvg");
+      
+      // Serialize the XML
+      const serializer = new XMLSerializer();
+      let source = serializer.serializeToString(svgNode);
+      
+      // Add namespaces
+      if(!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)){
+        source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+      }
+      if(!source.match(/^<svg[^>]+xmlns\:xhtml="http\:\/\/www\.w3\.org\/1999\/xhtml"/)){
+        source = source.replace(/^<svg/, '<svg xmlns:xhtml="http://www.w3.org/1999/xhtml"');
+      }
+      
+      // Prefix with XML tag
+      source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+      
+      // Convert to blob and download
+      const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+      const downloadLink = document.createElement("a");
+      downloadLink.href = url;
+      downloadLink.download = "mba_mindmap.svg";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    }
+
+    // Export PNG
+    function exportAsPng() {
+      if (!rootNode) return;
+      
+      const svgNode = document.getElementById("mindmapSvg");
+      const serializer = new XMLSerializer();
+      const svgString = serializer.serializeToString(svgNode);
+      const svgBlob = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+      
+      const DOMURL = window.URL || window.webkitURL || window;
+      const svgUrl = DOMURL.createObjectURL(svgBlob);
+      
+      const image = new Image();
+      const parent = svgNode.parentElement;
+      
+      // Render bounds size
+      image.width = parent.clientWidth * 2; // Double resolution
+      image.height = parent.clientHeight * 2;
+      
+      image.onload = function() {
+        const canvas = document.createElement("canvas");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const context = canvas.getContext("2d");
+        
+        // Fill canvas dark background
+        context.fillStyle = "#0b0f19";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw the image
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        
+        // Download
+        const pngUrl = canvas.toDataURL("image/png");
+        const downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = "mba_mindmap.png";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        DOMURL.revokeObjectURL(svgUrl);
+      };
+      
+      image.src = svgUrl;
+    }
+  </script>
+</body>
+</html>
