@@ -8,7 +8,7 @@
   <!-- Google Fonts & FontAwesome -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- D3.js -->
@@ -16,6 +16,10 @@
 
   <style>
     :root {
+      /* Base transitions */
+      --theme-transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+
+      /* Dark Theme (Default) */
       --bg-main: #060813;
       --bg-panel: rgba(11, 17, 33, 0.7);
       --bg-panel-solid: #0b0f1d;
@@ -25,6 +29,27 @@
       --text-secondary: #94a3b8;
       --text-muted: #475569;
       
+      --card-bg: #0b0f1d;
+      --card-bg-hover: rgba(13, 20, 38, 0.95);
+      --card-bg-active: rgba(18, 25, 48, 0.98);
+      --card-border: rgba(255, 255, 255, 0.05);
+      
+      --sidebar-right-bg: rgba(9, 14, 26, 0.82);
+      --landing-card-bg: rgba(11, 16, 30, 0.8);
+      --dropzone-bg: rgba(0, 0, 0, 0.15);
+      --search-bg: rgba(0, 0, 0, 0.25);
+      --search-bg-focus: rgba(0, 0, 0, 0.4);
+      --subtopic-bg: rgba(255, 255, 255, 0.015);
+      --subtopic-bg-hover: rgba(255, 255, 255, 0.04);
+      --details-card-bg: rgba(255, 255, 255, 0.015);
+      --details-card-border: rgba(255, 255, 255, 0.04);
+      --key-bg: rgba(255, 255, 255, 0.04);
+      --key-border: rgba(255, 255, 255, 0.08);
+      --grid-dot-color: rgba(148, 163, 184, 0.03);
+      --toggle-circle-bg: #1e293b;
+      --toggle-circle-text: #f3f4f6;
+      --modal-overlay-bg: rgba(6, 8, 19, 0.85);
+
       /* Vibrant HSL Hues for branches */
       --hue-root: 263;      /* Violet */
       --hue-hk1: 210;       /* Indigo */
@@ -41,6 +66,47 @@
       --color-other: hsl(var(--hue-other), 95%, 60%);
     }
 
+    [data-theme="light"] {
+      /* Light Theme overrides */
+      --bg-main: #f8fafc;
+      --bg-panel: rgba(255, 255, 255, 0.75);
+      --bg-panel-solid: #ffffff;
+      --border-color: rgba(15, 23, 42, 0.08);
+      --border-color-glow: rgba(15, 23, 42, 0.16);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      
+      --card-bg: #ffffff;
+      --card-bg-hover: rgba(241, 245, 249, 0.95);
+      --card-bg-active: rgba(226, 232, 240, 0.98);
+      --card-border: rgba(15, 23, 42, 0.08);
+      
+      --sidebar-right-bg: rgba(255, 255, 255, 0.85);
+      --landing-card-bg: rgba(255, 255, 255, 0.95);
+      --dropzone-bg: rgba(15, 23, 42, 0.03);
+      --search-bg: rgba(15, 23, 42, 0.03);
+      --search-bg-focus: rgba(15, 23, 42, 0.06);
+      --subtopic-bg: rgba(15, 23, 42, 0.02);
+      --subtopic-bg-hover: rgba(15, 23, 42, 0.05);
+      --details-card-bg: rgba(15, 23, 42, 0.02);
+      --details-card-border: rgba(15, 23, 42, 0.06);
+      --key-bg: rgba(15, 23, 42, 0.04);
+      --key-border: rgba(15, 23, 42, 0.08);
+      --grid-dot-color: rgba(71, 85, 105, 0.12);
+      --toggle-circle-bg: #f1f5f9;
+      --toggle-circle-text: #0f172a;
+      --modal-overlay-bg: rgba(248, 250, 252, 0.85);
+
+      /* Branch colors adjusted for light background contrast */
+      --color-root: hsl(var(--hue-root), 85%, 55%);
+      --color-hk1:  hsl(var(--hue-hk1),  85%, 50%);
+      --color-hk2:  hsl(var(--hue-hk2),  85%, 42%);
+      --color-hk3:  hsl(var(--hue-hk3),  75%, 38%);
+      --color-hk4:  hsl(var(--hue-hk4),  90%, 40%);
+      --color-other: hsl(var(--hue-other), 85%, 50%);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -54,6 +120,7 @@
       overflow: hidden;
       height: 100vh;
       display: flex;
+      transition: var(--theme-transition);
     }
 
     /* Radial Dot Grid Background Pattern */
@@ -64,9 +131,10 @@
       width: 100%;
       height: 100%;
       background-size: 50px 50px;
-      background-image: radial-gradient(circle, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+      background-image: radial-gradient(circle, var(--grid-dot-color) 1px, transparent 1px);
       z-index: 0;
       pointer-events: none;
+      transition: var(--theme-transition);
     }
 
     /* App Container Layout */
@@ -88,7 +156,7 @@
       flex-direction: column;
       height: 100%;
       z-index: 10;
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), var(--theme-transition);
     }
 
     .brand-section {
@@ -97,7 +165,7 @@
     }
 
     .brand-title {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 1.35rem;
       font-weight: 800;
       background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
@@ -111,7 +179,7 @@
     }
 
     .brand-subtitle {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.72rem;
       color: var(--text-secondary);
       letter-spacing: 1px;
@@ -144,19 +212,19 @@
     .search-input {
       width: 100%;
       padding: 14px 16px 14px 44px;
-      background: rgba(0, 0, 0, 0.25);
+      background: var(--search-bg);
       border: 1px solid var(--border-color);
       border-radius: 12px;
       color: var(--text-primary);
       font-size: 0.9rem;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s;
     }
 
     .search-input:focus {
       outline: none;
       border-color: #818cf8;
       box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.12);
-      background: rgba(0, 0, 0, 0.4);
+      background: var(--search-bg-focus);
     }
 
     .search-input:focus + i {
@@ -164,7 +232,7 @@
     }
 
     .search-stats {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.78rem;
       font-weight: 600;
       color: var(--text-secondary);
@@ -182,7 +250,7 @@
     }
 
     .section-title {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.75rem;
       font-weight: 700;
       color: var(--text-muted);
@@ -214,7 +282,7 @@
     }
 
     .legend-item:hover {
-      background: rgba(255, 255, 255, 0.02);
+      background: var(--subtopic-bg-hover);
       color: var(--text-primary);
       transform: translateX(2px);
     }
@@ -234,13 +302,13 @@
     }
 
     .dropzone {
-      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border: 1px dashed var(--border-color);
       border-radius: 12px;
       padding: 20px 16px;
       text-align: center;
-      background: rgba(0, 0, 0, 0.15);
+      background: var(--dropzone-bg);
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s, border-color 0.3s;
     }
 
     .dropzone:hover {
@@ -318,7 +386,7 @@
     }
 
     .control-btn:hover {
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--subtopic-bg-hover);
       color: var(--text-primary);
     }
 
@@ -328,14 +396,14 @@
 
     .control-divider {
       width: 1px;
-      background: rgba(255, 255, 255, 0.06);
+      background: var(--border-color);
       margin: 6px 3px;
     }
 
     /* Right Details Panel */
     .sidebar-right {
       width: 420px;
-      background: rgba(9, 14, 26, 0.82);
+      background: var(--sidebar-right-bg);
       backdrop-filter: blur(24px);
       border-left: 1px solid var(--border-color);
       display: flex;
@@ -346,7 +414,7 @@
       right: 0;
       top: 0;
       transform: translateX(100%);
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), var(--theme-transition);
       box-shadow: -15px 0 50px rgba(0, 0, 0, 0.45);
     }
 
@@ -363,7 +431,7 @@
     }
 
     .details-title {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 1.1rem;
       font-weight: 700;
       color: var(--text-primary);
@@ -388,7 +456,7 @@
 
     .close-btn:hover {
       color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--subtopic-bg-hover);
     }
 
     .details-content {
@@ -401,8 +469,8 @@
     }
 
     .details-card {
-      background: rgba(255, 255, 255, 0.015);
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: var(--details-card-bg);
+      border: 1px solid var(--details-card-border);
       border-radius: 16px;
       padding: 24px;
       position: relative;
@@ -419,7 +487,7 @@
     }
 
     .node-full-name {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 1.22rem;
       font-weight: 700;
       line-height: 1.45;
@@ -433,13 +501,13 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      border-top: 1px solid var(--details-card-border);
       padding-top: 18px;
     }
 
     .node-meta-item {
       display: grid;
-      grid-template-columns: 110px 1fr;
+      grid-template-columns: 135px 1fr;
       gap: 12px;
       font-size: 0.88rem;
       line-height: 1.4;
@@ -456,6 +524,7 @@
       align-items: center;
       gap: 6px;
       padding-top: 2px;
+      white-space: nowrap;
     }
 
     .node-meta-val {
@@ -470,10 +539,10 @@
       gap: 6px;
       font-size: 0.8rem;
       color: var(--text-secondary);
-      background: rgba(255, 255, 255, 0.01);
+      background: var(--subtopic-bg);
       padding: 12px 16px;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--details-card-border);
       line-height: 1.45;
     }
 
@@ -509,7 +578,7 @@
       border: none;
       border-radius: 12px;
       color: white;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-weight: 700;
       font-size: 0.95rem;
       text-decoration: none;
@@ -539,18 +608,18 @@
       align-items: center;
       justify-content: space-between;
       padding: 14px 18px;
-      background: rgba(255, 255, 255, 0.015);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      background: var(--subtopic-bg);
+      border: 1px solid var(--details-card-border);
       border-radius: 12px;
       font-size: 0.88rem;
       cursor: pointer;
       color: var(--text-secondary);
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s, border-color 0.3s;
     }
 
     .subtopic-item:hover {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.08);
+      background: var(--subtopic-bg-hover);
+      border-color: var(--key-border);
       padding-left: 24px;
       color: var(--text-primary);
     }
@@ -596,8 +665,8 @@
     .mindmap-node-card {
       width: 100%;
       height: 100%;
-      background: #0b0f1d;
-      border: 1.5px solid rgba(255, 255, 255, 0.05);
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
       border-radius: 12px;
       padding: 10px 14px;
       display: flex;
@@ -615,13 +684,13 @@
       transform: translateY(-3px) scale(1.02);
       border-color: var(--accent-color);
       box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.7), 0 0 15px -3px var(--accent-color);
-      background: rgba(13, 20, 38, 0.95);
+      background: var(--card-bg-hover);
     }
 
     .mindmap-node-card.active {
       border-color: var(--accent-color) !important;
       box-shadow: 0 0 16px -2px var(--accent-color);
-      background: rgba(18, 25, 48, 0.98);
+      background: var(--card-bg-active);
     }
 
     .mindmap-node-card.search-match {
@@ -648,7 +717,7 @@
     }
 
     .card-title {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.84rem;
       font-weight: 500;
       line-height: 1.4;
@@ -670,13 +739,13 @@
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      background: #1e293b;
+      background: var(--toggle-circle-bg);
       border: 1.5px solid var(--accent-color);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 0.5rem;
-      color: var(--text-primary);
+      color: var(--toggle-circle-text);
       cursor: pointer;
       z-index: 10;
       transition: all 0.2s;
@@ -699,7 +768,7 @@
 
     /* Depth badges in card */
     .card-badge {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
@@ -735,8 +804,8 @@
 
     .landing-card {
       width: 480px;
-      background: rgba(11, 16, 30, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: var(--landing-card-bg);
+      border: 1px solid var(--border-color);
       border-radius: 20px;
       padding: 44px 36px;
       text-align: center;
@@ -753,7 +822,7 @@
     }
 
     .landing-title {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 1.6rem;
       font-weight: 800;
       margin-bottom: 10px;
@@ -768,10 +837,10 @@
     }
 
     .landing-dropzone {
-      border: 2px dashed rgba(255, 255, 255, 0.1);
+      border: 2px dashed var(--border-color-glow);
       border-radius: 14px;
       padding: 32px 24px;
-      background: rgba(0, 0, 0, 0.2);
+      background: var(--dropzone-bg);
       cursor: pointer;
       transition: all 0.2s;
       margin-bottom: 24px;
@@ -793,7 +862,7 @@
       padding: 14px;
       border: none;
       border-radius: 10px;
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.92rem;
       font-weight: 700;
       cursor: pointer;
@@ -813,14 +882,14 @@
 
     .btn-outline {
       background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--border-color);
       color: var(--text-primary);
       margin-top: 12px;
     }
 
     .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.04);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: var(--subtopic-bg-hover);
+      border-color: var(--border-color-glow);
     }
 
     /* Help & Shortcuts Tooltip button */
@@ -849,6 +918,33 @@
       background: rgba(255, 255, 255, 0.04);
     }
 
+    /* Theme Toggle floating button */
+    .theme-btn {
+      position: absolute;
+      top: 28px;
+      right: 80px; /* Symmetrical offset next to the help button */
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--bg-panel);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 5;
+      transition: all 0.2s, transform 0.5s ease;
+    }
+
+    .theme-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--border-color-glow);
+      background: rgba(255, 255, 255, 0.04);
+      transform: rotate(20deg);
+    }
+
     /* Help Modal */
     .help-modal {
       position: absolute;
@@ -856,7 +952,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(6, 8, 19, 0.85);
+      background: var(--modal-overlay-bg);
       backdrop-filter: blur(12px);
       z-index: 1000;
       display: flex;
@@ -889,7 +985,7 @@
     }
 
     .help-modal-title {
-      font-family: 'Outfit', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 1.3rem;
       font-weight: 700;
     }
@@ -919,8 +1015,8 @@
     }
 
     .key {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--key-bg);
+      border: 1px solid var(--key-border);
       border-radius: 6px;
       padding: 5px 10px;
       font-family: monospace;
@@ -1025,6 +1121,14 @@
       .help-btn {
         top: 20px;
         right: 20px;
+        width: 44px;
+        height: 44px;
+      }
+
+      /* Relocate theme button to make room on mobile */
+      .theme-btn {
+        top: 20px;
+        right: 74px;
         width: 44px;
         height: 44px;
       }
@@ -1163,6 +1267,11 @@
     <!-- Help floating button -->
     <button class="help-btn" id="helpBtn" title="Trợ giúp & Phím tắt">
       <i class="fa-solid fa-question"></i>
+    </button>
+
+    <!-- Theme Toggle floating button -->
+    <button class="theme-btn" id="themeBtn" title="Chuyển chế độ Sáng/Tối">
+      <i class="fa-solid fa-sun"></i>
     </button>
 
     <!-- Left Sidebar -->
@@ -1327,6 +1436,14 @@
   </div>
 
   <script>
+    // Immediate Theme Restore (Prevents visual flash)
+    const currentTheme = localStorage.getItem("theme") || "dark";
+    if (currentTheme === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+
     // Global State
     let rawData = null;
     let rootNode = null;
@@ -1623,7 +1740,7 @@
         
       toggleBtn.append("circle")
         .attr("r", 8)
-        .attr("fill", "#1e293b")
+        .attr("fill", "var(--toggle-circle-bg)")
         .attr("stroke", d => getGroupColor(getNodeGroup(d)))
         .attr("stroke-width", 1.5)
         .attr("cursor", "pointer")
@@ -1636,7 +1753,7 @@
       toggleBtn.append("text")
         .attr("dy", ".3em")
         .attr("text-anchor", "middle")
-        .attr("fill", "#f3f4f6")
+        .attr("fill", "var(--toggle-circle-text)")
         .attr("font-size", "8px")
         .attr("font-family", "monospace")
         .attr("pointer-events", "none")
@@ -1993,6 +2110,32 @@
 
     // UI Event listeners
     function setupEventListeners() {
+      // Theme Toggler Setup
+      const themeBtn = document.getElementById("themeBtn");
+      const updateThemeIcon = (theme) => {
+        if (theme === "light") {
+          themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+        } else {
+          themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        }
+      };
+      
+      // Sync the icon with the restored theme
+      const initialTheme = localStorage.getItem("theme") || "dark";
+      updateThemeIcon(initialTheme);
+      
+      themeBtn.addEventListener("click", () => {
+        const isLight = document.documentElement.getAttribute("data-theme") === "light";
+        const newTheme = isLight ? "dark" : "light";
+        if (newTheme === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+        } else {
+          document.documentElement.removeAttribute("data-theme");
+        }
+        localStorage.setItem("theme", newTheme);
+        updateThemeIcon(newTheme);
+      });
+
       // Mobile Left Sidebar Toggle
       const mobileToggleBtn = document.getElementById("mobileToggleBtn");
       const sidebarLeftBackdrop = document.getElementById("sidebarLeftBackdrop");
@@ -2235,8 +2378,9 @@
         canvas.height = image.height;
         const context = canvas.getContext("2d");
         
-        // Fill canvas dark background
-        context.fillStyle = "#0b0f19";
+        // Fill canvas background dynamically based on theme
+        const isLightTheme = document.documentElement.getAttribute("data-theme") === "light";
+        context.fillStyle = isLightTheme ? "#f8fafc" : "#0b0f19";
         context.fillRect(0, 0, canvas.width, canvas.height);
         
         // Draw the image
