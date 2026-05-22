@@ -8,6 +8,12 @@ def clean_tag(tag):
         return tag.split('}', 1)[1]
     return tag
 
+def normalize_text(text):
+    if not text:
+        return ""
+    # Collapse consecutive whitespace and newlines to a single space
+    return re.sub(r'\s+', ' ', text).strip()
+
 def get_text_from_textbox(textbox_elem):
     # Find all paragraph (p) tags and concatenate their chars
     text_pieces = []
@@ -20,7 +26,7 @@ def get_text_from_textbox(textbox_elem):
                     p_text += char_elem.text
             if p_text:
                 text_pieces.append(p_text)
-    return " ".join(text_pieces).strip()
+    return normalize_text(" ".join(text_pieces))
 
 def get_link_from_topic(topic_elem):
     # Search for field elements and check m:command or command attributes
@@ -48,6 +54,7 @@ def build_tree(topic_elem):
             
     if not name:
         name = "Untitled Topic"
+    name = normalize_text(name)
         
     # 2. Get link
     link = get_link_from_topic(topic_elem)
@@ -93,6 +100,25 @@ def parse_emm_file(xml_path):
         
     central_topic = build_tree(central_topic_elem)
     
+    # Clean and sort top-level children (semesters)
+    if "children" in central_topic:
+        cleaned_children = []
+        for child in central_topic["children"]:
+            # Exclude Floating Topic
+            if child.get("name") == "Floating Topic":
+                continue
+            cleaned_children.append(child)
+            
+        def semester_sort_key(node):
+            name = node.get("name", "")
+            match = re.search(r'(?:HK|Học kỳ)\s*(\d+)', name, re.IGNORECASE)
+            if match:
+                return (0, int(match.group(1)))
+            return (1, name)
+            
+        cleaned_children.sort(key=semester_sort_key)
+        central_topic["children"] = cleaned_children
+    
     result = {
         "file": "SEMBAKhung_MBA_22_1",
         "centralTopic": [central_topic]
@@ -117,8 +143,7 @@ def main():
             
         print("Success! JSON file updated with parsed EMM data.")
         
-        # Compare with previous if exists (but here we just overwrite to ensure 100% completeness)
-        # Let's count nodes
+        # Count nodes
         def count_nodes(node):
             count = 1
             for child in node.get("children", []):

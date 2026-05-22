@@ -8,7 +8,7 @@
   <!-- Google Fonts & FontAwesome -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- D3.js -->
@@ -16,36 +16,36 @@
 
   <style>
     :root {
-      --bg-main: #0b0f19;
-      --bg-panel: rgba(17, 24, 39, 0.75);
-      --bg-panel-solid: #111827;
-      --border-color: rgba(255, 255, 255, 0.08);
-      --border-color-glow: rgba(255, 255, 255, 0.15);
-      --text-primary: #f3f4f6;
-      --text-secondary: #9ca3af;
-      --text-muted: #6b7280;
+      --bg-main: #060813;
+      --bg-panel: rgba(11, 17, 33, 0.7);
+      --bg-panel-solid: #0b0f1d;
+      --border-color: rgba(255, 255, 255, 0.05);
+      --border-color-glow: rgba(255, 255, 255, 0.12);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
       
-      /* HSL Hues for branches */
-      --hue-root: 260;      /* Violet */
-      --hue-hk1: 240;       /* Indigo */
-      --hue-hk2: 190;       /* Cyan */
-      --hue-hk3: 150;       /* Emerald/Green */
-      --hue-hk4: 35;        /* Amber/Orange */
-      --hue-other: 340;     /* Rose */
+      /* Vibrant HSL Hues for branches */
+      --hue-root: 263;      /* Violet */
+      --hue-hk1: 210;       /* Indigo */
+      --hue-hk2: 180;       /* Cyan */
+      --hue-hk3: 142;       /* Emerald */
+      --hue-hk4: 38;        /* Amber */
+      --hue-other: 330;     /* Rose */
       
-      --color-root: hsl(var(--hue-root), 85%, 60%);
-      --color-hk1:  hsl(var(--hue-hk1),  85%, 60%);
-      --color-hk2:  hsl(var(--hue-hk2),  85%, 55%);
-      --color-hk3:  hsl(var(--hue-hk3),  85%, 50%);
-      --color-hk4:  hsl(var(--hue-hk4),  85%, 55%);
-      --color-other: hsl(var(--hue-other), 85%, 60%);
+      --color-root: hsl(var(--hue-root), 90%, 65%);
+      --color-hk1:  hsl(var(--hue-hk1),  90%, 60%);
+      --color-hk2:  hsl(var(--hue-hk2),  90%, 50%);
+      --color-hk3:  hsl(var(--hue-hk3),  76%, 45%);
+      --color-hk4:  hsl(var(--hue-hk4),  92%, 50%);
+      --color-other: hsl(var(--hue-other), 95%, 60%);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
     body {
@@ -56,17 +56,15 @@
       display: flex;
     }
 
-    /* Grid Background Pattern */
+    /* Radial Dot Grid Background Pattern */
     .grid-bg {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-size: 40px 40px;
-      background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 50px 50px;
+      background-image: radial-gradient(circle, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
       z-index: 0;
       pointer-events: none;
     }
@@ -84,169 +82,189 @@
     .sidebar-left {
       width: 320px;
       background: var(--bg-panel);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(24px);
       border-right: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
       height: 100%;
       z-index: 10;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .brand-section {
-      padding: 24px;
+      padding: 28px 24px;
       border-bottom: 1px solid var(--border-color);
     }
 
     .brand-title {
-      font-size: 1.25rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #a78bfa, #6366f1);
+      background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
     }
 
     .brand-subtitle {
-      font-size: 0.75rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.72rem;
       color: var(--text-secondary);
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
       text-transform: uppercase;
+      font-weight: 700;
     }
 
     /* Search & Filters */
     .search-section {
-      padding: 20px;
+      padding: 24px 20px;
       border-bottom: 1px solid var(--border-color);
     }
 
     .search-box {
       position: relative;
       width: 100%;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .search-box i {
       position: absolute;
-      left: 14px;
+      left: 16px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.95rem;
+      transition: color 0.2s;
     }
 
     .search-input {
       width: 100%;
-      padding: 12px 16px 12px 40px;
-      background: rgba(0, 0, 0, 0.3);
+      padding: 14px 16px 14px 44px;
+      background: rgba(0, 0, 0, 0.25);
       border: 1px solid var(--border-color);
-      border-radius: 10px;
+      border-radius: 12px;
       color: var(--text-primary);
       font-size: 0.9rem;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .search-input:focus {
       outline: none;
       border-color: #818cf8;
-      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15);
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.12);
       background: rgba(0, 0, 0, 0.4);
     }
 
+    .search-input:focus + i {
+      color: #818cf8;
+    }
+
     .search-stats {
-      font-size: 0.75rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
       color: var(--text-secondary);
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 0 4px;
     }
 
     /* Legend / Guides */
     .legend-section {
-      padding: 20px;
+      padding: 24px 20px;
       flex-grow: 1;
       overflow-y: auto;
     }
 
     .section-title {
-      font-size: 0.8rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 14px;
+      letter-spacing: 1.2px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .legend-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 0.85rem;
+      gap: 14px;
+      font-size: 0.88rem;
+      font-weight: 500;
       color: var(--text-secondary);
       cursor: pointer;
-      padding: 6px 8px;
-      border-radius: 6px;
-      transition: background 0.2s;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
     }
 
     .legend-item:hover {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(255, 255, 255, 0.02);
       color: var(--text-primary);
+      transform: translateX(2px);
     }
 
     .legend-color {
-      width: 12px;
-      height: 12px;
-      border-radius: 3px;
-      box-shadow: 0 0 8px currentColor;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      box-shadow: 0 0 10px currentColor;
+      flex-shrink: 0;
     }
 
     /* File Import Dropzone */
     .import-section {
-      padding: 20px;
+      padding: 24px 20px;
       border-top: 1px solid var(--border-color);
     }
 
     .dropzone {
-      border: 1px dashed var(--border-color);
-      border-radius: 10px;
-      padding: 16px;
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px 16px;
       text-align: center;
       background: rgba(0, 0, 0, 0.15);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .dropzone:hover {
       border-color: #818cf8;
-      background: rgba(129, 140, 248, 0.05);
+      background: rgba(129, 140, 248, 0.03);
     }
 
     .dropzone i {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       color: #818cf8;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .dropzone p {
-      font-size: 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
       color: var(--text-secondary);
     }
 
     .dropzone span {
       display: block;
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     /* Canvas / Mindmap Area */
@@ -265,26 +283,26 @@
     /* Control Panel overlays on canvas */
     .control-panel {
       position: absolute;
-      bottom: 24px;
-      left: 24px;
+      bottom: 28px;
+      left: 28px;
       display: flex;
-      gap: 8px;
+      gap: 6px;
       background: var(--bg-panel);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(20px);
       border: 1px solid var(--border-color);
       padding: 6px;
-      border-radius: 10px;
+      border-radius: 12px;
       z-index: 5;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
     }
 
     .control-btn {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
       border-radius: 8px;
       border: none;
       background: transparent;
-      color: var(--text-primary);
+      color: var(--text-secondary);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -294,25 +312,25 @@
     }
 
     .control-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: #818cf8;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
     }
 
     .control-btn:active {
-      transform: scale(0.95);
+      transform: scale(0.92);
     }
 
     .control-divider {
       width: 1px;
-      background: var(--border-color);
-      margin: 4px 2px;
+      background: rgba(255, 255, 255, 0.06);
+      margin: 6px 3px;
     }
 
     /* Right Details Panel */
     .sidebar-right {
-      width: 380px;
-      background: var(--bg-panel);
-      backdrop-filter: blur(16px);
+      width: 420px;
+      background: rgba(9, 14, 26, 0.82);
+      backdrop-filter: blur(24px);
       border-left: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
@@ -322,8 +340,8 @@
       right: 0;
       top: 0;
       transform: translateX(100%);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: -15px 0 50px rgba(0, 0, 0, 0.45);
     }
 
     .sidebar-right.active {
@@ -331,7 +349,7 @@
     }
 
     .details-header {
-      padding: 24px;
+      padding: 28px;
       border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
@@ -339,9 +357,13 @@
     }
 
     .details-title {
-      font-size: 1rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .close-btn {
@@ -349,65 +371,90 @@
       border: none;
       color: var(--text-muted);
       cursor: pointer;
-      font-size: 1.1rem;
-      padding: 4px;
+      font-size: 1.15rem;
+      padding: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 5px;
+      border-radius: 8px;
       transition: all 0.2s;
     }
 
     .close-btn:hover {
       color: var(--text-primary);
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
     }
 
     .details-content {
-      padding: 24px;
+      padding: 28px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 24px;
       overflow-y: auto;
       flex-grow: 1;
     }
 
     .details-card {
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 20px;
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 16px;
+      padding: 24px;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
     }
 
     .details-card-accent {
       position: absolute;
       top: 0;
       left: 0;
-      width: 4px;
+      width: 5px;
       height: 100%;
     }
 
     .node-full-name {
-      font-size: 1.1rem;
-      font-weight: 600;
-      line-height: 1.5;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.22rem;
+      font-weight: 700;
+      line-height: 1.45;
       color: var(--text-primary);
-      margin-bottom: 12px;
+      margin-bottom: 20px;
+      letter-spacing: -0.2px;
+    }
+
+    /* Structured Metadata Grid */
+    .meta-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 18px;
     }
 
     .node-meta-item {
-      display: flex;
+      display: grid;
+      grid-template-columns: 110px 1fr;
       gap: 12px;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
+      font-size: 0.88rem;
+      line-height: 1.4;
+      align-items: flex-start;
     }
 
     .node-meta-label {
       color: var(--text-muted);
-      min-width: 80px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-top: 2px;
+    }
+
+    .node-meta-val {
+      color: var(--text-secondary);
+      font-weight: 500;
     }
 
     .breadcrumbs {
@@ -417,23 +464,30 @@
       gap: 6px;
       font-size: 0.8rem;
       color: var(--text-secondary);
-      background: rgba(255, 255, 255, 0.02);
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.01);
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      line-height: 1.45;
     }
 
     .breadcrumb-item {
       display: flex;
       align-items: center;
       gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .breadcrumb-item:hover {
+      color: var(--text-primary);
+      transform: translateX(1px);
     }
 
     .breadcrumb-item:not(:last-child)::after {
       content: "\f105";
       font-family: "Font Awesome 6 Free";
       font-weight: 900;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
       margin-left: 2px;
     }
@@ -444,52 +498,66 @@
       justify-content: center;
       gap: 10px;
       width: 100%;
-      padding: 14px;
+      padding: 16px;
       background: linear-gradient(135deg, #10b981, #059669);
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       color: white;
-      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
       font-size: 0.95rem;
       text-decoration: none;
-      transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
     }
 
     .drive-btn:hover {
       background: linear-gradient(135deg, #059669, #047857);
-      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
-      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+      transform: translateY(-2px);
     }
 
     .drive-btn:active {
-      transform: translateY(1px);
+      transform: translateY(0);
     }
 
     /* Subtopics / Child List in details */
     .subtopics-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
 
     .subtopic-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 14px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      font-size: 0.85rem;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.015);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      border-radius: 12px;
+      font-size: 0.88rem;
       cursor: pointer;
-      transition: all 0.2s;
+      color: var(--text-secondary);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .subtopic-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--border-color-glow);
-      padding-left: 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.08);
+      padding-left: 24px;
+      color: var(--text-primary);
+    }
+
+    .subtopic-item i.subtopic-arrow {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .subtopic-item:hover i.subtopic-arrow {
+      color: var(--text-primary);
+      transform: translateX(3px);
     }
 
     /* SVG Elements Styling */
@@ -518,34 +586,34 @@
     }
 
     .mindmap-node-card {
-      width: 240px;
-      height: 70px;
-      background: rgba(13, 18, 30, 0.85);
-      backdrop-filter: blur(8px);
-      border: 1.5px solid var(--border-color);
-      border-radius: 10px;
-      padding: 8px 12px;
+      width: 250px;
+      height: 78px;
+      background: rgba(9, 13, 26, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1.5px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 10px 14px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       cursor: pointer;
       position: relative;
-      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s, background-color 0.25s;
-      box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 20px -3px rgba(0, 0, 0, 0.5);
       user-select: none;
     }
 
     .mindmap-node-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px) scale(1.02);
       border-color: var(--accent-color);
-      box-shadow: 0 10px 20px -8px var(--shadow-color);
-      background: rgba(20, 26, 42, 0.95);
+      box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.7), 0 0 15px -3px var(--accent-color);
+      background: rgba(13, 20, 38, 0.95);
     }
 
     .mindmap-node-card.active {
       border-color: var(--accent-color) !important;
-      box-shadow: 0 0 14px -2px var(--shadow-color);
-      background: rgba(26, 33, 54, 0.98);
+      box-shadow: 0 0 16px -2px var(--accent-color);
+      background: rgba(18, 25, 48, 0.98);
     }
 
     .mindmap-node-card.search-match {
@@ -555,33 +623,34 @@
 
     @keyframes pulse-glow {
       0% { box-shadow: 0 0 4px rgba(129, 140, 248, 0.4); }
-      50% { box-shadow: 0 0 16px rgba(129, 140, 248, 0.8); }
+      50% { box-shadow: 0 0 18px rgba(129, 140, 248, 0.8); }
       100% { box-shadow: 0 0 4px rgba(129, 140, 248, 0.4); }
     }
 
     /* Left accent line in card */
     .card-accent {
       position: absolute;
-      top: 10px;
-      bottom: 10px;
+      top: 12px;
+      bottom: 12px;
       left: 0;
       width: 4px;
-      border-radius: 0 3px 3px 0;
+      border-radius: 0 4px 4px 0;
       background-color: var(--accent-color);
-      box-shadow: 0 0 6px var(--accent-color);
+      box-shadow: 0 0 8px var(--accent-color);
     }
 
     .card-title {
-      font-size: 0.82rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.84rem;
       font-weight: 500;
-      line-height: 1.35;
+      line-height: 1.4;
       color: var(--text-primary);
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding-left: 4px;
+      padding-left: 6px;
     }
 
     /* Toggle Expand/Collapse Circle */
@@ -614,21 +683,22 @@
     /* Link indicator */
     .card-link-icon {
       position: absolute;
-      top: 6px;
-      right: 8px;
-      font-size: 0.65rem;
+      top: 8px;
+      right: 10px;
+      font-size: 0.7rem;
       color: #10b981;
     }
 
     /* Depth badges in card */
     .card-badge {
-      font-size: 0.62rem;
-      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       color: var(--accent-color);
-      margin-bottom: 2px;
-      padding-left: 4px;
+      margin-bottom: 4px;
+      padding-left: 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -656,65 +726,68 @@
     }
 
     .landing-card {
-      width: 460px;
-      background: rgba(17, 24, 39, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 40px 32px;
+      width: 480px;
+      background: rgba(11, 16, 30, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 44px 36px;
       text-align: center;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(24px);
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
     }
 
     .landing-icon {
-      font-size: 3rem;
-      background: linear-gradient(135deg, #818cf8, #c084fc);
+      font-size: 3.2rem;
+      background: linear-gradient(135deg, #a78bfa, #818cf8, #6366f1);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
     .landing-title {
-      font-size: 1.5rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
       font-weight: 800;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      letter-spacing: -0.3px;
     }
 
     .landing-desc {
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 28px;
+      line-height: 1.65;
+      margin-bottom: 30px;
     }
 
     .landing-dropzone {
-      border: 2px dashed rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
-      padding: 30px 20px;
+      border: 2px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 32px 24px;
       background: rgba(0, 0, 0, 0.2);
       cursor: pointer;
       transition: all 0.2s;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .landing-dropzone:hover {
       border-color: #818cf8;
-      background: rgba(129, 140, 248, 0.05);
+      background: rgba(129, 140, 248, 0.04);
     }
 
     .landing-dropzone i {
-      font-size: 2rem;
+      font-size: 2.2rem;
       color: #818cf8;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .primary-btn {
       width: 100%;
-      padding: 12px;
+      padding: 14px;
       border: none;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
+      border-radius: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -727,31 +800,31 @@
 
     .btn-solid:hover {
       background: #6366f1;
-      box-shadow: 0 6px 16px rgba(129, 140, 248, 0.4);
+      box-shadow: 0 6px 18px rgba(129, 140, 248, 0.4);
     }
 
     .btn-outline {
       background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       color: var(--text-primary);
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .btn-outline:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
     /* Help & Shortcuts Tooltip button */
     .help-btn {
       position: absolute;
-      top: 24px;
-      right: 24px;
-      width: 40px;
-      height: 40px;
+      top: 28px;
+      right: 28px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: var(--bg-panel);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(20px);
       border: 1px solid var(--border-color);
       color: var(--text-secondary);
       display: flex;
@@ -765,7 +838,7 @@
     .help-btn:hover {
       color: var(--text-primary);
       border-color: var(--border-color-glow);
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.04);
     }
 
     /* Help Modal */
@@ -775,8 +848,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(11, 15, 25, 0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(6, 8, 19, 0.85);
+      backdrop-filter: blur(12px);
       z-index: 1000;
       display: flex;
       align-items: center;
@@ -792,42 +865,44 @@
     }
 
     .help-modal-card {
-      width: 500px;
+      width: 520px;
       background: var(--bg-panel-solid);
       border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      border-radius: 20px;
+      padding: 36px;
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
     }
 
     .help-modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
 
     .help-modal-title {
-      font-size: 1.2rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
       font-weight: 700;
     }
 
     .shortcut-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 18px;
+      margin-bottom: 28px;
     }
 
     .shortcut-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
     }
 
     .shortcut-desc {
       color: var(--text-secondary);
+      font-weight: 500;
     }
 
     .shortcut-keys {
@@ -836,25 +911,25 @@
     }
 
     .key {
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 4px;
-      padding: 4px 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 5px 10px;
       font-family: monospace;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: var(--text-primary);
-      box-shadow: 0 2px 0 #111827;
+      box-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
     }
 
     /* Loader */
     .loader {
       display: inline-block;
-      width: 24px;
-      height: 24px;
-      border: 3px solid rgba(255,255,255,.3);
+      width: 26px;
+      height: 26px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
       border-radius: 50%;
       border-top-color: #818cf8;
-      animation: spin 1s ease-in-out infinite;
+      animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin {
@@ -1057,13 +1132,15 @@
           
           <h3 class="node-full-name" id="detailsNodeName">Đang tải dữ liệu...</h3>
           
-          <div class="node-meta-item">
-            <span class="node-meta-label">Mã học phần:</span>
-            <span id="detailsCode">-</span>
-          </div>
-          <div class="node-meta-item">
-            <span class="node-meta-label">Nhánh cha:</span>
-            <span id="detailsParentNode">-</span>
+          <div class="meta-grid">
+            <div class="node-meta-item">
+              <span class="node-meta-label"><i class="fa-solid fa-barcode"></i> Mã học phần:</span>
+              <span id="detailsCode" class="node-meta-val">-</span>
+            </div>
+            <div class="node-meta-item">
+              <span class="node-meta-label"><i class="fa-solid fa-diagram-predecessor"></i> Nhánh cha:</span>
+              <span id="detailsParentNode" class="node-meta-val">-</span>
+            </div>
           </div>
         </div>
 
@@ -1102,10 +1179,10 @@
     let totalNodesCount = 0;
     
     // D3 Configuration constants
-    const cardWidth = 240;
-    const cardHeight = 70;
-    const levelSpacing = 320;
-    const verticalSpacing = 40;
+    const cardWidth = 250;
+    const cardHeight = 78;
+    const levelSpacing = 330;
+    const verticalSpacing = 45;
     
     // D3 objects
     let svg, zoomGroup, d3Zoom, treeLayout;
@@ -1116,434 +1193,15 @@
   "file": "SEMBAKhung_MBA_22_1",
   "centralTopic": [
     {
-      "name": "SEMBA(Khung MBA 2.2)Floating TopicHK 3Triết học trong kinh doanh Khái luận về Triết học Bản thể luậnPhép biện chứngNhận thức luận Học thuyết hình thái Kinh tế - Xã hộiTriết học chính trịÝ thức xã hộiTriết học về con người Đạo đức trong kinh doanhTổng quan về đạo đức trong kinh doanh và quản trị các bên liên quan (Stakeholder)  Các vấn đề trong đạo đức kinh doanh Thể chế hoá đạo đức kinh doanh trong doanh nghiệp Mô hình đưa ra quyết định và lãnh đạo đạo đức Thuyết đạo đức và giá trị quan (Moral physolophies and Values)Xây dựng văn hoá đạo đức trong tổ chức  Đạo đức trong các chức năng doanh nghiệp  Triển khai đạo đức trong kinh doanh  Trách nhiệm xã hội (CSR) và phát triển bền vững  Ra quyết định kinh doanh ứng dụng công nghê Tổng quan về ra quyết định trong quản trị kinh doanh  Tư duy phản biện và ra quyết định trong thời đại số:  Khai phá dữ liệu và phân tích dự đoán trong ra quyết định  Trí tuệ nhân tạo (AI) và tự động hoá trong việc ra quyết định  Ra quyết định trong môi trường không chắc chắn và rủi ro  Lãnh đạo thời kỳ chuyển đổi sốGiới thiệu về lãnh đạoLãnh đạo là gì?Các quan điểm khác nhau về lãnh đạoMô hình hành viCác nguyên tắc nền tảngHành vi lãnh đạo là gì?Điểm mạnh và điểm yếu khi áp dụngmô hình này trong tổ chứcCác phong cách lãnh đạoSự phát triển và xu hướngVăn hóa tổ chức Các yếu tố ảnh hưởng đến phong cáchlãnh đạoĐiểm mạnh và điểm yếuLãnh đạo theo tình huốngMô hình lãnh đạo của Hersey vàBlanchardCách thức hoạt động của mô hìnhThuyết thay thế lãnh đạoPhong cách lãnh đạo “Charisma’ và lãnh đạo chuyển đổiThuyết bản thân của House và ShamirThuyết quy kếtĐặc điểm của nhà lãnh đạo “charismaCác khía cạnh tiêu cực của phong cách“charisma” Lãnh đạo chuyển đổiLãnh đạo đích thực (Authentic leadership)Vai trò của lãnh đạo đích thựcPhương pháp học tập và thực hànhPseudo-authenticitySự đa dạng và lãnh đạoSự đa dạng là gì?Thuyết bản sắc xã hộiLãnh đạo và giới tínhSự đa dạng và văn hóaQuyền lực, sự ảnh hưởng, và quyền hạnQuyền lực là gì?Các dạng của quyền lựcMặt trái của quyền lựcLãnh đạo và đội nhómThuyết mô hình nhómMô hình nhóm tiêu chuẩnMô hình nhóm mô tảMô hình vai trò cá nhân của Bel BelbinBánh xe quản lý đội nhóm củaMargerison-McCannNhược điểm của đội nhómLãnh đạo và sự thay đổiTầm nhìnCách tiếp cận để thay đổiMô hình của quá trình thay đổiPhản ứng cá nhân đối với thay đổiPhát triển năng lực lãnh đạoNăng lực lãnh đạo là gì?Yếu tố tổ chứcCác nhà lãnh đạo được phát triển như thế nào?Lãnh đạo chiến lượcLãnh đạo chiến lược là gì?Sự cần thiết phải có nhà lãnh đạo chiến lượcMột nhà lãnh đạo chiến lược làm những gì'?Lãnh đạo chuyển đổi sốLãnh đạo chuyển đổi số khác lãnh đạo bìnhthường như thế nàoVì sao phải chuyển đổi số và vai trò quantrọng của lãnh đạoTrở ngại lớn nhất có thể gặp phải là gì?Mô hình lãnh đạo đã thay đổiTrích xuất lơi ích kinh doanh từ công nghệChiến lược lãnh đạo trong thời kỳ số hóaNăm phương diện cải tổ doanh nghiệp trongthời đại sốKhai thác mạng lưới khách hàng Xây dựng nền tảng kỹ thuật số và biến dữ liệuthành tài sảnXây dựng lộ trình chuyển đổi sốChuyển đổi số thành côngĐi đến đổi mới thông qua thử nghiệm nhanhCác lý thuyết và công cụ để tạo ra và làm chủcác mô hình kinh doanh đột pháĐiều chỉnh tuyên bố giá trịKinh nghiệm và bài học thực tế của các nhàlãnh đạo kỹ thuật số và những người tham giaHội thảo chuyên đề quản trị 3HK 4Khởi nghiệp và đổi mới sáng tạo trong kỷ nguyên AI  Bối cảnh của khởi nghiệp và đổi mới thời đại số  Xác định cơ hội trong khởi nghiệp và đổi mới  Tìm kiếm nguồn lực cho quá trình đổi mới  Tạo dựng dự án khởi nghiệp Mô hình kinh doanh và tạo dựng giá trị khởi nghiệp Quản trị bản thân để thành công (Seft-Management for Success) Con đường thành công Hiểu về não bộCảm xúc và bản năng Tối ưu hóa não bộ Kết nối thân tâm Bộ não thứ hai Dinh dưỡng thông minhLối sống khỏeTrình bày nhóm Sự hình thành cái tôiKế hoạch hành động Đề án tốt nghiệpThực tập: Bài tập chuẩn đoán daonh nghiệpHội thảo chuyên đề 4HK 1Quản trị Tổ chức và Nguồn nhân lực ứng dụng  AI Tổng quan hành vi tổ chức Hành vi cá nhân Hành vi nhóm Cấu trúc và văn hóa tổ chứcTổng quan về quản trị nhân sự trong kỷ nguyên AI Quản lý hiệu suấtPhát triển nguồn nhân lực Xây dựng chính sách đãi ngộ nhân sự  Phương pháp học tập và tư duy khoa học Nguyên lý và phương pháp học tập:  Chiến lược học tập và thực hành học tập hiệu quảTổng quan về tư duy khoa học cho nhà quản trị  Phân tích tình huống quản trị bằng tư duy khoa họcNghiên cứu và ứng dụng vào quản trịKinh tế học quản trịTổng quan về Kinh tế học quản trị Cầu của thị trường Sản xuất và chi phí Mô hình định giá và sản lượng Độc quyền nhóm Giới thiệu một số chủ đề mới trong kinh tế quản trị Kế toán – Tài chính cho nhà quản lý trong thời đại số  Một số khái niệm cơ bản trong kế toán và vai trò của kế toán trong quản trị tài chính doanh nghiệpBáo cáo tài chính (vai trò, chức năng và các thông tin quan trọng)Thông tin kế toán tài chính trong phân tích tài chính doanh nghiệpKế toán quản trịCác quyết định về giá (Pricing)Chi phí cận biên (Mariginal Costing) và đưa ra quyết địnhLập ngân sách (Budgets)Quản trị tài chínhPhân tích rủi roCông nghệ tài chínhỨng dụng công nghệ tài chính Triết học Hội thảo chuyên đề quản trị 1   Cách mạng công nghiệp 4.0 và sự bùng nổ của Trí tuệ nhân tạo (AI) Kinh tế Việt Nam trong thời kỳ hội nhậpHội nhập kinh tế toàn cầu  Quản trị công ty đa quốc gia Quản trị vận hành doanh nghiệp thời 4.0   Nghệ thuật lãnh đạo trong kỷ nguyên AI  Quản trị nhân sự ứng dụng công nghệ số và trí tuệ nhân tạo Khởi nghiệp và sáng tạo đổi mới trong kỷ nguyên AI Chiến lược chuyển đổi số và ứng dụng AI cho doanh nghiệp Chiến lược mua bán và sát nhập để tăng trưởng đột phá  • Xây dựng văn hóa tổ chức Mô hình kinh doanh tại những thị trường mới  Chuyển đổi mô hình kinh doanh Tương lai Marketing trong kỷ nguyên số Lãnh đạo thời kỳ chuyển đổi số  Tương lai của trí tuệ nhân tạo và ứng dụng trong quản trị  Khám phá năng lực lãnh đạo bản thânCác chuyên đề tham khảo khác  HK 2Phân tích dữ liệu kinh doanh dựa trên công nghệ và dữ liệuTổng quan về Phân tích dữ liệu kinh doanh Phân tích mô tả Suy luận thống kê Phân tích dự báo Giới thiệu về khai thác dữ liệuPhân tích đề xuất Quản lý rủi ro và ra quyết định Chiến lược doanh nghiệp dựa trên dữ liệu Quản trị Marketing và trải nghiệm khách hàng ứng dụng AI Tổng quan về quản trị Marketing trong thời đại số Nghiên cứu Marketing và dự báo nhu cầu Phát triển chiến lược và kế hoạch MarketingXây dựng tài sản thương hiệu (Brand Equity) và Branding  Chiến lược sản phẩm và giá Truyền thông tích hợp (Integrated marketing communications) và đạo đức sử dụng AI Quản trị trải nghiệm khách hàng (CX)Phân tích hành vi người tiêu dụngKhám phá “Insights” và phân đoạn thị trường Quản trị chiến lược trong kỷ nguyên số Tổng quan về chiến lược và quản trị chiến lượcPhân tích và đánh giá môi trường bên ngoài Phân tích môi trường bên trong và khả năng cạnh tranh Các loại hình chiến lược cạnh tranh tổng quát Lựa chọn chiến lượcChiến lược trong môi trường toàn cầu và đa dạng văn hoá  Xây dựng chiến lược doanh nghiệp trong kỷ nguyên AI Thực thi chiến lược Quản trị vận hành nội bộ Quản trị dự án theo chuẩn quốc tế Giới thiệu Môi trường hoạt động của dự ánVai trò của nhà quản lý dự án Quản trị tích hợp dự ánKhía cạnh cơ bản của quản lý dự ánQuản lý tiến độ hiệu quả Quản lý chi phí dự ánQuản lý chất lượngGiao tiếp hiệu quảGiải quyết các rủi roSắp xếp thứ tự ưu tiên và   quản lý hiệu quả lợi ích, kỳ vọng và nhu cầu của các bên liên quanHội thảo chuyên đề quản trị 2",
+      "name": "SEMBA (Khung MBA 2.2)",
       "link": "https://drive.google.com/drive/folders/1KAQKRnPf0jtZe1K-_lGZYnZxn_t1B8Cm?usp=sharing",
       "children": [
         {
-          "name": "Floating Topic"
-        },
-        {
-          "name": "HK 3Triết học trong kinh doanh Khái luận về Triết học Bản thể luậnPhép biện chứngNhận thức luận Học thuyết hình thái Kinh tế - Xã hộiTriết học chính trịÝ thức xã hộiTriết học về con người Đạo đức trong kinh doanhTổng quan về đạo đức trong kinh doanh và quản trị các bên liên quan (Stakeholder)  Các vấn đề trong đạo đức kinh doanh Thể chế hoá đạo đức kinh doanh trong doanh nghiệp Mô hình đưa ra quyết định và lãnh đạo đạo đức Thuyết đạo đức và giá trị quan (Moral physolophies and Values)Xây dựng văn hoá đạo đức trong tổ chức  Đạo đức trong các chức năng doanh nghiệp  Triển khai đạo đức trong kinh doanh  Trách nhiệm xã hội (CSR) và phát triển bền vững  Ra quyết định kinh doanh ứng dụng công nghê Tổng quan về ra quyết định trong quản trị kinh doanh  Tư duy phản biện và ra quyết định trong thời đại số:  Khai phá dữ liệu và phân tích dự đoán trong ra quyết định  Trí tuệ nhân tạo (AI) và tự động hoá trong việc ra quyết định  Ra quyết định trong môi trường không chắc chắn và rủi ro  Lãnh đạo thời kỳ chuyển đổi sốGiới thiệu về lãnh đạoLãnh đạo là gì?Các quan điểm khác nhau về lãnh đạoMô hình hành viCác nguyên tắc nền tảngHành vi lãnh đạo là gì?Điểm mạnh và điểm yếu khi áp dụngmô hình này trong tổ chứcCác phong cách lãnh đạoSự phát triển và xu hướngVăn hóa tổ chức Các yếu tố ảnh hưởng đến phong cáchlãnh đạoĐiểm mạnh và điểm yếuLãnh đạo theo tình huốngMô hình lãnh đạo của Hersey vàBlanchardCách thức hoạt động của mô hìnhThuyết thay thế lãnh đạoPhong cách lãnh đạo “Charisma’ và lãnh đạo chuyển đổiThuyết bản thân của House và ShamirThuyết quy kếtĐặc điểm của nhà lãnh đạo “charismaCác khía cạnh tiêu cực của phong cách“charisma” Lãnh đạo chuyển đổiLãnh đạo đích thực (Authentic leadership)Vai trò của lãnh đạo đích thựcPhương pháp học tập và thực hànhPseudo-authenticitySự đa dạng và lãnh đạoSự đa dạng là gì?Thuyết bản sắc xã hộiLãnh đạo và giới tínhSự đa dạng và văn hóaQuyền lực, sự ảnh hưởng, và quyền hạnQuyền lực là gì?Các dạng của quyền lựcMặt trái của quyền lựcLãnh đạo và đội nhómThuyết mô hình nhómMô hình nhóm tiêu chuẩnMô hình nhóm mô tảMô hình vai trò cá nhân của Bel BelbinBánh xe quản lý đội nhóm củaMargerison-McCannNhược điểm của đội nhómLãnh đạo và sự thay đổiTầm nhìnCách tiếp cận để thay đổiMô hình của quá trình thay đổiPhản ứng cá nhân đối với thay đổiPhát triển năng lực lãnh đạoNăng lực lãnh đạo là gì?Yếu tố tổ chứcCác nhà lãnh đạo được phát triển như thế nào?Lãnh đạo chiến lượcLãnh đạo chiến lược là gì?Sự cần thiết phải có nhà lãnh đạo chiến lượcMột nhà lãnh đạo chiến lược làm những gì'?Lãnh đạo chuyển đổi sốLãnh đạo chuyển đổi số khác lãnh đạo bìnhthường như thế nàoVì sao phải chuyển đổi số và vai trò quantrọng của lãnh đạoTrở ngại lớn nhất có thể gặp phải là gì?Mô hình lãnh đạo đã thay đổiTrích xuất lơi ích kinh doanh từ công nghệChiến lược lãnh đạo trong thời kỳ số hóaNăm phương diện cải tổ doanh nghiệp trongthời đại sốKhai thác mạng lưới khách hàng Xây dựng nền tảng kỹ thuật số và biến dữ liệuthành tài sảnXây dựng lộ trình chuyển đổi sốChuyển đổi số thành côngĐi đến đổi mới thông qua thử nghiệm nhanhCác lý thuyết và công cụ để tạo ra và làm chủcác mô hình kinh doanh đột pháĐiều chỉnh tuyên bố giá trịKinh nghiệm và bài học thực tế của các nhàlãnh đạo kỹ thuật số và những người tham giaHội thảo chuyên đề quản trị 3",
-          "link": "https://drive.google.com/drive/folders/1KAQKRnPf0jtZe1K-_lGZYnZxn_t1B8Cm?usp=sharing",
-          "children": [
-            {
-              "name": "Triết học trong kinh doanh Khái luận về Triết học Bản thể luậnPhép biện chứngNhận thức luận Học thuyết hình thái Kinh tế - Xã hộiTriết học chính trịÝ thức xã hộiTriết học về con người",
-              "children": [
-                {
-                  "name": "Khái luận về Triết học"
-                },
-                {
-                  "name": "Bản thể luận"
-                },
-                {
-                  "name": "Phép biện chứng"
-                },
-                {
-                  "name": "Nhận thức luận"
-                },
-                {
-                  "name": "Học thuyết hình thái Kinh tế - Xã hội"
-                },
-                {
-                  "name": "Triết học chính trị"
-                },
-                {
-                  "name": "Ý thức xã hội"
-                },
-                {
-                  "name": "Triết học về con người"
-                }
-              ]
-            },
-            {
-              "name": "Đạo đức trong kinh doanhTổng quan về đạo đức trong kinh doanh và quản trị các bên liên quan (Stakeholder)  Các vấn đề trong đạo đức kinh doanh Thể chế hoá đạo đức kinh doanh trong doanh nghiệp Mô hình đưa ra quyết định và lãnh đạo đạo đức Thuyết đạo đức và giá trị quan (Moral physolophies and Values)Xây dựng văn hoá đạo đức trong tổ chức  Đạo đức trong các chức năng doanh nghiệp  Triển khai đạo đức trong kinh doanh  Trách nhiệm xã hội (CSR) và phát triển bền vững",
-              "link": "https://drive.google.com/drive/folders/1KAQKRnPf0jtZe1K-_lGZYnZxn_t1B8Cm?usp=sharing",
-              "children": [
-                {
-                  "name": "Tổng quan về đạo đức trong kinh doanh và quản trị các bên liên quan (Stakeholder)"
-                },
-                {
-                  "name": "Các vấn đề trong đạo đức kinh doanh"
-                },
-                {
-                  "name": "Thể chế hoá đạo đức kinh doanh trong doanh nghiệp"
-                },
-                {
-                  "name": "Mô hình đưa ra quyết định và lãnh đạo đạo đức"
-                },
-                {
-                  "name": "Thuyết đạo đức và giá trị quan (Moral physolophies and Values)"
-                },
-                {
-                  "name": "Xây dựng văn hoá đạo đức trong tổ chức"
-                },
-                {
-                  "name": "Đạo đức trong các chức năng doanh nghiệp"
-                },
-                {
-                  "name": "Triển khai đạo đức trong kinh doanh"
-                },
-                {
-                  "name": "Trách nhiệm xã hội (CSR) và phát triển bền vững"
-                }
-              ]
-            },
-            {
-              "name": "Ra quyết định kinh doanh ứng dụng công nghê Tổng quan về ra quyết định trong quản trị kinh doanh  Tư duy phản biện và ra quyết định trong thời đại số:  Khai phá dữ liệu và phân tích dự đoán trong ra quyết định  Trí tuệ nhân tạo (AI) và tự động hoá trong việc ra quyết định  Ra quyết định trong môi trường không chắc chắn và rủi ro",
-              "link": "https://drive.google.com/drive/folders/1IHZeNH_DhrlalsYZu-d_BD3VCIVqeUCx?usp=sharing",
-              "children": [
-                {
-                  "name": "Tổng quan về ra quyết định trong quản trị kinh doanh"
-                },
-                {
-                  "name": "Tư duy phản biện và ra quyết định trong thời đại số:"
-                },
-                {
-                  "name": "Khai phá dữ liệu và phân tích dự đoán trong ra quyết định"
-                },
-                {
-                  "name": "Trí tuệ nhân tạo (AI) và tự động hoá trong việc ra quyết định"
-                },
-                {
-                  "name": "Ra quyết định trong môi trường không chắc chắn và rủi ro"
-                }
-              ]
-            },
-            {
-              "name": "Lãnh đạo thời kỳ chuyển đổi sốGiới thiệu về lãnh đạoLãnh đạo là gì?Các quan điểm khác nhau về lãnh đạoMô hình hành viCác nguyên tắc nền tảngHành vi lãnh đạo là gì?Điểm mạnh và điểm yếu khi áp dụngmô hình này trong tổ chứcCác phong cách lãnh đạoSự phát triển và xu hướngVăn hóa tổ chức Các yếu tố ảnh hưởng đến phong cáchlãnh đạoĐiểm mạnh và điểm yếuLãnh đạo theo tình huốngMô hình lãnh đạo của Hersey vàBlanchardCách thức hoạt động của mô hìnhThuyết thay thế lãnh đạoPhong cách lãnh đạo “Charisma’ và lãnh đạo chuyển đổiThuyết bản thân của House và ShamirThuyết quy kếtĐặc điểm của nhà lãnh đạo “charismaCác khía cạnh tiêu cực của phong cách“charisma” Lãnh đạo chuyển đổiLãnh đạo đích thực (Authentic leadership)Vai trò của lãnh đạo đích thựcPhương pháp học tập và thực hànhPseudo-authenticitySự đa dạng và lãnh đạoSự đa dạng là gì?Thuyết bản sắc xã hộiLãnh đạo và giới tínhSự đa dạng và văn hóaQuyền lực, sự ảnh hưởng, và quyền hạnQuyền lực là gì?Các dạng của quyền lựcMặt trái của quyền lựcLãnh đạo và đội nhómThuyết mô hình nhómMô hình nhóm tiêu chuẩnMô hình nhóm mô tảMô hình vai trò cá nhân của Bel BelbinBánh xe quản lý đội nhóm củaMargerison-McCannNhược điểm của đội nhómLãnh đạo và sự thay đổiTầm nhìnCách tiếp cận để thay đổiMô hình của quá trình thay đổiPhản ứng cá nhân đối với thay đổiPhát triển năng lực lãnh đạoNăng lực lãnh đạo là gì?Yếu tố tổ chứcCác nhà lãnh đạo được phát triển như thế nào?Lãnh đạo chiến lượcLãnh đạo chiến lược là gì?Sự cần thiết phải có nhà lãnh đạo chiến lượcMột nhà lãnh đạo chiến lược làm những gì'?Lãnh đạo chuyển đổi sốLãnh đạo chuyển đổi số khác lãnh đạo bìnhthường như thế nàoVì sao phải chuyển đổi số và vai trò quantrọng của lãnh đạoTrở ngại lớn nhất có thể gặp phải là gì?Mô hình lãnh đạo đã thay đổiTrích xuất lơi ích kinh doanh từ công nghệChiến lược lãnh đạo trong thời kỳ số hóaNăm phương diện cải tổ doanh nghiệp trongthời đại sốKhai thác mạng lưới khách hàng Xây dựng nền tảng kỹ thuật số và biến dữ liệuthành tài sảnXây dựng lộ trình chuyển đổi sốChuyển đổi số thành côngĐi đến đổi mới thông qua thử nghiệm nhanhCác lý thuyết và công cụ để tạo ra và làm chủcác mô hình kinh doanh đột pháĐiều chỉnh tuyên bố giá trịKinh nghiệm và bài học thực tế của các nhàlãnh đạo kỹ thuật số và những người tham gia",
-              "link": "https://drive.google.com/drive/folders/1eYuHc22PFo_b5vyJRyEqifUZsbDBPtfE?usp=sharing",
-              "children": [
-                {
-                  "name": "Giới thiệu về lãnh đạoLãnh đạo là gì?Các quan điểm khác nhau về lãnh đạo",
-                  "children": [
-                    {
-                      "name": "Lãnh đạo là gì?"
-                    },
-                    {
-                      "name": "Các quan điểm khác nhau về lãnh đạo"
-                    }
-                  ]
-                },
-                {
-                  "name": "Mô hình hành viCác nguyên tắc nền tảngHành vi lãnh đạo là gì?Điểm mạnh và điểm yếu khi áp dụngmô hình này trong tổ chức",
-                  "children": [
-                    {
-                      "name": "Các nguyên tắc nền tảng"
-                    },
-                    {
-                      "name": "Hành vi lãnh đạo là gì?"
-                    },
-                    {
-                      "name": "Điểm mạnh và điểm yếu khi áp dụngmô hình này trong tổ chức"
-                    }
-                  ]
-                },
-                {
-                  "name": "Các phong cách lãnh đạoSự phát triển và xu hướngVăn hóa tổ chức Các yếu tố ảnh hưởng đến phong cáchlãnh đạoĐiểm mạnh và điểm yếu",
-                  "children": [
-                    {
-                      "name": "Sự phát triển và xu hướng"
-                    },
-                    {
-                      "name": "Văn hóa tổ chức"
-                    },
-                    {
-                      "name": "Các yếu tố ảnh hưởng đến phong cáchlãnh đạo"
-                    },
-                    {
-                      "name": "Điểm mạnh và điểm yếu"
-                    }
-                  ]
-                },
-                {
-                  "name": "Lãnh đạo theo tình huốngMô hình lãnh đạo của Hersey vàBlanchardCách thức hoạt động của mô hìnhThuyết thay thế lãnh đạo",
-                  "children": [
-                    {
-                      "name": "Mô hình lãnh đạo của Hersey vàBlanchard"
-                    },
-                    {
-                      "name": "Cách thức hoạt động của mô hình"
-                    },
-                    {
-                      "name": "Thuyết thay thế lãnh đạo"
-                    }
-                  ]
-                },
-                {
-                  "name": "Phong cách lãnh đạo “Charisma’ và lãnh đạo chuyển đổiThuyết bản thân của House và ShamirThuyết quy kếtĐặc điểm của nhà lãnh đạo “charismaCác khía cạnh tiêu cực của phong cách“charisma” Lãnh đạo chuyển đổi",
-                  "children": [
-                    {
-                      "name": "Thuyết bản thân của House và Shamir"
-                    },
-                    {
-                      "name": "Thuyết quy kết"
-                    },
-                    {
-                      "name": "Đặc điểm của nhà lãnh đạo “charisma"
-                    },
-                    {
-                      "name": "Các khía cạnh tiêu cực của phong cách“charisma”"
-                    },
-                    {
-                      "name": "Lãnh đạo chuyển đổi"
-                    }
-                  ]
-                },
-                {
-                  "name": "Lãnh đạo đích thực (Authentic leadership)Vai trò của lãnh đạo đích thựcPhương pháp học tập và thực hànhPseudo-authenticity",
-                  "children": [
-                    {
-                      "name": "Vai trò của lãnh đạo đích thực"
-                    },
-                    {
-                      "name": "Phương pháp học tập và thực hành"
-                    },
-                    {
-                      "name": "Pseudo-authenticity"
-                    }
-                  ]
-                },
-                {
-                  "name": "Sự đa dạng và lãnh đạoSự đa dạng là gì?Thuyết bản sắc xã hộiLãnh đạo và giới tínhSự đa dạng và văn hóa",
-                  "children": [
-                    {
-                      "name": "Sự đa dạng là gì?"
-                    },
-                    {
-                      "name": "Thuyết bản sắc xã hội"
-                    },
-                    {
-                      "name": "Lãnh đạo và giới tính"
-                    },
-                    {
-                      "name": "Sự đa dạng và văn hóa"
-                    }
-                  ]
-                },
-                {
-                  "name": "Quyền lực, sự ảnh hưởng, và quyền hạnQuyền lực là gì?Các dạng của quyền lựcMặt trái của quyền lực",
-                  "children": [
-                    {
-                      "name": "Quyền lực là gì?"
-                    },
-                    {
-                      "name": "Các dạng của quyền lực"
-                    },
-                    {
-                      "name": "Mặt trái của quyền lực"
-                    }
-                  ]
-                },
-                {
-                  "name": "Lãnh đạo và đội nhómThuyết mô hình nhómMô hình nhóm tiêu chuẩnMô hình nhóm mô tảMô hình vai trò cá nhân của Bel BelbinBánh xe quản lý đội nhóm củaMargerison-McCannNhược điểm của đội nhóm",
-                  "children": [
-                    {
-                      "name": "Thuyết mô hình nhóm"
-                    },
-                    {
-                      "name": "Mô hình nhóm tiêu chuẩn"
-                    },
-                    {
-                      "name": "Mô hình nhóm mô tả"
-                    },
-                    {
-                      "name": "Mô hình vai trò cá nhân của Bel Belbin"
-                    },
-                    {
-                      "name": "Bánh xe quản lý đội nhóm củaMargerison-McCann"
-                    },
-                    {
-                      "name": "Nhược điểm của đội nhóm"
-                    }
-                  ]
-                },
-                {
-                  "name": "Lãnh đạo và sự thay đổiTầm nhìnCách tiếp cận để thay đổiMô hình của quá trình thay đổiPhản ứng cá nhân đối với thay đổi",
-                  "children": [
-                    {
-                      "name": "Tầm nhìn"
-                    },
-                    {
-                      "name": "Cách tiếp cận để thay đổi"
-                    },
-                    {
-                      "name": "Mô hình của quá trình thay đổi"
-                    },
-                    {
-                      "name": "Phản ứng cá nhân đối với thay đổi"
-                    }
-                  ]
-                },
-                {
-                  "name": "Phát triển năng lực lãnh đạoNăng lực lãnh đạo là gì?Yếu tố tổ chứcCác nhà lãnh đạo được phát triển như thế nào?",
-                  "children": [
-                    {
-                      "name": "Năng lực lãnh đạo là gì?"
-                    },
-                    {
-                      "name": "Yếu tố tổ chức"
-                    },
-                    {
-                      "name": "Các nhà lãnh đạo được phát triển như thế nào?"
-                    }
-                  ]
-                },
-                {
-                  "name": "Lãnh đạo chiến lượcLãnh đạo chiến lược là gì?Sự cần thiết phải có nhà lãnh đạo chiến lượcMột nhà lãnh đạo chiến lược làm những gì'?",
-                  "children": [
-                    {
-                      "name": "Lãnh đạo chiến lược là gì?"
-                    },
-                    {
-                      "name": "Sự cần thiết phải có nhà lãnh đạo chiến lược"
-                    },
-                    {
-                      "name": "Một nhà lãnh đạo chiến lược làm những gì'?"
-                    }
-                  ]
-                },
-                {
-                  "name": "Lãnh đạo chuyển đổi sốLãnh đạo chuyển đổi số khác lãnh đạo bìnhthường như thế nàoVì sao phải chuyển đổi số và vai trò quantrọng của lãnh đạoTrở ngại lớn nhất có thể gặp phải là gì?Mô hình lãnh đạo đã thay đổiTrích xuất lơi ích kinh doanh từ công nghệ",
-                  "children": [
-                    {
-                      "name": "Lãnh đạo chuyển đổi số khác lãnh đạo bìnhthường như thế nào"
-                    },
-                    {
-                      "name": "Vì sao phải chuyển đổi số và vai trò quantrọng của lãnh đạo"
-                    },
-                    {
-                      "name": "Trở ngại lớn nhất có thể gặp phải là gì?"
-                    },
-                    {
-                      "name": "Mô hình lãnh đạo đã thay đổi"
-                    },
-                    {
-                      "name": "Trích xuất lơi ích kinh doanh từ công nghệ"
-                    }
-                  ]
-                },
-                {
-                  "name": "Chiến lược lãnh đạo trong thời kỳ số hóaNăm phương diện cải tổ doanh nghiệp trongthời đại sốKhai thác mạng lưới khách hàng Xây dựng nền tảng kỹ thuật số và biến dữ liệuthành tài sảnXây dựng lộ trình chuyển đổi số",
-                  "children": [
-                    {
-                      "name": "Năm phương diện cải tổ doanh nghiệp trongthời đại số"
-                    },
-                    {
-                      "name": "Khai thác mạng lưới khách hàng"
-                    },
-                    {
-                      "name": "Xây dựng nền tảng kỹ thuật số và biến dữ liệuthành tài sản"
-                    },
-                    {
-                      "name": "Xây dựng lộ trình chuyển đổi số"
-                    }
-                  ]
-                },
-                {
-                  "name": "Chuyển đổi số thành côngĐi đến đổi mới thông qua thử nghiệm nhanhCác lý thuyết và công cụ để tạo ra và làm chủcác mô hình kinh doanh đột pháĐiều chỉnh tuyên bố giá trịKinh nghiệm và bài học thực tế của các nhàlãnh đạo kỹ thuật số và những người tham gia",
-                  "children": [
-                    {
-                      "name": "Đi đến đổi mới thông qua thử nghiệm nhanh"
-                    },
-                    {
-                      "name": "Các lý thuyết và công cụ để tạo ra và làm chủcác mô hình kinh doanh đột phá"
-                    },
-                    {
-                      "name": "Điều chỉnh tuyên bố giá trị"
-                    },
-                    {
-                      "name": "Kinh nghiệm và bài học thực tế của các nhàlãnh đạo kỹ thuật số và những người tham gia"
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "Hội thảo chuyên đề quản trị 3"
-            }
-          ]
-        },
-        {
-          "name": "HK 4Khởi nghiệp và đổi mới sáng tạo trong kỷ nguyên AI  Bối cảnh của khởi nghiệp và đổi mới thời đại số  Xác định cơ hội trong khởi nghiệp và đổi mới  Tìm kiếm nguồn lực cho quá trình đổi mới  Tạo dựng dự án khởi nghiệp Mô hình kinh doanh và tạo dựng giá trị khởi nghiệp Quản trị bản thân để thành công (Seft-Management for Success) Con đường thành công Hiểu về não bộCảm xúc và bản năng Tối ưu hóa não bộ Kết nối thân tâm Bộ não thứ hai Dinh dưỡng thông minhLối sống khỏeTrình bày nhóm Sự hình thành cái tôiKế hoạch hành động Đề án tốt nghiệpThực tập: Bài tập chuẩn đoán daonh nghiệpHội thảo chuyên đề 4",
-          "link": "https://drive.google.com/drive/folders/1zwglBDdw7yGJ6RyBQSXh-EP0X_dULj_y?usp=sharing",
-          "children": [
-            {
-              "name": "Khởi nghiệp và đổi mới sáng tạo trong kỷ nguyên AI  Bối cảnh của khởi nghiệp và đổi mới thời đại số  Xác định cơ hội trong khởi nghiệp và đổi mới  Tìm kiếm nguồn lực cho quá trình đổi mới  Tạo dựng dự án khởi nghiệp Mô hình kinh doanh và tạo dựng giá trị khởi nghiệp",
-              "link": "https://drive.google.com/drive/folders/1zwglBDdw7yGJ6RyBQSXh-EP0X_dULj_y?usp=sharing",
-              "children": [
-                {
-                  "name": "Bối cảnh của khởi nghiệp và đổi mới thời đại số"
-                },
-                {
-                  "name": "Xác định cơ hội trong khởi nghiệp và đổi mới"
-                },
-                {
-                  "name": "Tìm kiếm nguồn lực cho quá trình đổi mới"
-                },
-                {
-                  "name": "Tạo dựng dự án khởi nghiệp"
-                },
-                {
-                  "name": "Mô hình kinh doanh và tạo dựng giá trị khởi nghiệp"
-                }
-              ]
-            },
-            {
-              "name": "Quản trị bản thân để thành công (Seft-Management for Success) Con đường thành công Hiểu về não bộCảm xúc và bản năng Tối ưu hóa não bộ Kết nối thân tâm Bộ não thứ hai Dinh dưỡng thông minhLối sống khỏeTrình bày nhóm Sự hình thành cái tôiKế hoạch hành động",
-              "children": [
-                {
-                  "name": "Con đường thành công"
-                },
-                {
-                  "name": "Hiểu về não bộ"
-                },
-                {
-                  "name": "Cảm xúc và bản năng"
-                },
-                {
-                  "name": "Tối ưu hóa não bộ"
-                },
-                {
-                  "name": "Kết nối thân tâm"
-                },
-                {
-                  "name": "Bộ não thứ hai"
-                },
-                {
-                  "name": "Dinh dưỡng thông minh"
-                },
-                {
-                  "name": "Lối sống khỏe"
-                },
-                {
-                  "name": "Trình bày nhóm"
-                },
-                {
-                  "name": "Sự hình thành cái tôi"
-                },
-                {
-                  "name": "Kế hoạch hành động"
-                }
-              ]
-            },
-            {
-              "name": "Đề án tốt nghiệp",
-              "link": "https://drive.google.com/drive/folders/1626OqR_BIPkga4WPn5rEzVlm-FVSO9Bn?usp=sharing"
-            },
-            {
-              "name": "Thực tập: Bài tập chuẩn đoán daonh nghiệp"
-            },
-            {
-              "name": "Hội thảo chuyên đề 4"
-            }
-          ]
-        },
-        {
-          "name": "HK 1Quản trị Tổ chức và Nguồn nhân lực ứng dụng  AI Tổng quan hành vi tổ chức Hành vi cá nhân Hành vi nhóm Cấu trúc và văn hóa tổ chứcTổng quan về quản trị nhân sự trong kỷ nguyên AI Quản lý hiệu suấtPhát triển nguồn nhân lực Xây dựng chính sách đãi ngộ nhân sự  Phương pháp học tập và tư duy khoa học Nguyên lý và phương pháp học tập:  Chiến lược học tập và thực hành học tập hiệu quảTổng quan về tư duy khoa học cho nhà quản trị  Phân tích tình huống quản trị bằng tư duy khoa họcNghiên cứu và ứng dụng vào quản trịKinh tế học quản trịTổng quan về Kinh tế học quản trị Cầu của thị trường Sản xuất và chi phí Mô hình định giá và sản lượng Độc quyền nhóm Giới thiệu một số chủ đề mới trong kinh tế quản trị Kế toán – Tài chính cho nhà quản lý trong thời đại số  Một số khái niệm cơ bản trong kế toán và vai trò của kế toán trong quản trị tài chính doanh nghiệpBáo cáo tài chính (vai trò, chức năng và các thông tin quan trọng)Thông tin kế toán tài chính trong phân tích tài chính doanh nghiệpKế toán quản trịCác quyết định về giá (Pricing)Chi phí cận biên (Mariginal Costing) và đưa ra quyết địnhLập ngân sách (Budgets)Quản trị tài chínhPhân tích rủi roCông nghệ tài chínhỨng dụng công nghệ tài chính Triết học Hội thảo chuyên đề quản trị 1   Cách mạng công nghiệp 4.0 và sự bùng nổ của Trí tuệ nhân tạo (AI) Kinh tế Việt Nam trong thời kỳ hội nhậpHội nhập kinh tế toàn cầu  Quản trị công ty đa quốc gia Quản trị vận hành doanh nghiệp thời 4.0   Nghệ thuật lãnh đạo trong kỷ nguyên AI  Quản trị nhân sự ứng dụng công nghệ số và trí tuệ nhân tạo Khởi nghiệp và sáng tạo đổi mới trong kỷ nguyên AI Chiến lược chuyển đổi số và ứng dụng AI cho doanh nghiệp Chiến lược mua bán và sát nhập để tăng trưởng đột phá  • Xây dựng văn hóa tổ chức Mô hình kinh doanh tại những thị trường mới  Chuyển đổi mô hình kinh doanh Tương lai Marketing trong kỷ nguyên số Lãnh đạo thời kỳ chuyển đổi số  Tương lai của trí tuệ nhân tạo và ứng dụng trong quản trị  Khám phá năng lực lãnh đạo bản thânCác chuyên đề tham khảo khác",
+          "name": "HK 1",
           "link": "https://drive.google.com/drive/folders/1nepsPiQb9ZV4skFrNtUeptnOY9FRjj6i?usp=sharing",
           "children": [
             {
-              "name": "Quản trị Tổ chức và Nguồn nhân lực ứng dụng  AI Tổng quan hành vi tổ chức Hành vi cá nhân Hành vi nhóm Cấu trúc và văn hóa tổ chứcTổng quan về quản trị nhân sự trong kỷ nguyên AI Quản lý hiệu suấtPhát triển nguồn nhân lực Xây dựng chính sách đãi ngộ nhân sự",
+              "name": "Quản trị Tổ chức và Nguồn nhân lực ứng dụng AI",
               "link": "https://drive.google.com/drive/folders/1nepsPiQb9ZV4skFrNtUeptnOY9FRjj6i?usp=sharing",
               "children": [
                 {
@@ -1576,7 +1234,7 @@
               ]
             },
             {
-              "name": "Phương pháp học tập và tư duy khoa học Nguyên lý và phương pháp học tập:  Chiến lược học tập và thực hành học tập hiệu quảTổng quan về tư duy khoa học cho nhà quản trị  Phân tích tình huống quản trị bằng tư duy khoa họcNghiên cứu và ứng dụng vào quản trị",
+              "name": "Phương pháp học tập và tư duy khoa học",
               "link": "https://drive.google.com/drive/folders/18R47DJgrIH3mkQH4zGNRfyBvL13XLmUV?usp=sharing",
               "children": [
                 {
@@ -1597,7 +1255,7 @@
               ]
             },
             {
-              "name": "Kinh tế học quản trịTổng quan về Kinh tế học quản trị Cầu của thị trường Sản xuất và chi phí Mô hình định giá và sản lượng Độc quyền nhóm Giới thiệu một số chủ đề mới trong kinh tế quản trị",
+              "name": "Kinh tế học quản trị",
               "link": "https://drive.google.com/drive/folders/11UyfXYxq-DAt1rTMEPpIRTSjJT070gcW?usp=sharing",
               "children": [
                 {
@@ -1621,7 +1279,7 @@
               ]
             },
             {
-              "name": "Kế toán – Tài chính cho nhà quản lý trong thời đại số  Một số khái niệm cơ bản trong kế toán và vai trò của kế toán trong quản trị tài chính doanh nghiệpBáo cáo tài chính (vai trò, chức năng và các thông tin quan trọng)Thông tin kế toán tài chính trong phân tích tài chính doanh nghiệpKế toán quản trịCác quyết định về giá (Pricing)Chi phí cận biên (Mariginal Costing) và đưa ra quyết địnhLập ngân sách (Budgets)Quản trị tài chínhPhân tích rủi roCông nghệ tài chínhỨng dụng công nghệ tài chính Triết học",
+              "name": "Kế toán – Tài chính cho nhà quản lý trong thời đại số",
               "link": "https://drive.google.com/drive/folders/15MEFlsb81w_b72uXSeVnmM-9Ce1qRmam?usp=sharing",
               "children": [
                 {
@@ -1634,7 +1292,7 @@
                   "name": "Thông tin kế toán tài chính trong phân tích tài chính doanh nghiệp"
                 },
                 {
-                  "name": "Kế toán quản trịCác quyết định về giá (Pricing)Chi phí cận biên (Mariginal Costing) và đưa ra quyết địnhLập ngân sách (Budgets)",
+                  "name": "Kế toán quản trị",
                   "children": [
                     {
                       "name": "Các quyết định về giá (Pricing)"
@@ -1665,7 +1323,7 @@
               ]
             },
             {
-              "name": "Hội thảo chuyên đề quản trị 1   Cách mạng công nghiệp 4.0 và sự bùng nổ của Trí tuệ nhân tạo (AI) Kinh tế Việt Nam trong thời kỳ hội nhậpHội nhập kinh tế toàn cầu  Quản trị công ty đa quốc gia Quản trị vận hành doanh nghiệp thời 4.0   Nghệ thuật lãnh đạo trong kỷ nguyên AI  Quản trị nhân sự ứng dụng công nghệ số và trí tuệ nhân tạo Khởi nghiệp và sáng tạo đổi mới trong kỷ nguyên AI Chiến lược chuyển đổi số và ứng dụng AI cho doanh nghiệp Chiến lược mua bán và sát nhập để tăng trưởng đột phá  • Xây dựng văn hóa tổ chức Mô hình kinh doanh tại những thị trường mới  Chuyển đổi mô hình kinh doanh Tương lai Marketing trong kỷ nguyên số Lãnh đạo thời kỳ chuyển đổi số  Tương lai của trí tuệ nhân tạo và ứng dụng trong quản trị  Khám phá năng lực lãnh đạo bản thânCác chuyên đề tham khảo khác",
+              "name": "Hội thảo chuyên đề quản trị 1",
               "children": [
                 {
                   "name": "Cách mạng công nghiệp 4.0 và sự bùng nổ của Trí tuệ nhân tạo (AI)"
@@ -1726,11 +1384,11 @@
           ]
         },
         {
-          "name": "HK 2Phân tích dữ liệu kinh doanh dựa trên công nghệ và dữ liệuTổng quan về Phân tích dữ liệu kinh doanh Phân tích mô tả Suy luận thống kê Phân tích dự báo Giới thiệu về khai thác dữ liệuPhân tích đề xuất Quản lý rủi ro và ra quyết định Chiến lược doanh nghiệp dựa trên dữ liệu Quản trị Marketing và trải nghiệm khách hàng ứng dụng AI Tổng quan về quản trị Marketing trong thời đại số Nghiên cứu Marketing và dự báo nhu cầu Phát triển chiến lược và kế hoạch MarketingXây dựng tài sản thương hiệu (Brand Equity) và Branding  Chiến lược sản phẩm và giá Truyền thông tích hợp (Integrated marketing communications) và đạo đức sử dụng AI Quản trị trải nghiệm khách hàng (CX)Phân tích hành vi người tiêu dụngKhám phá “Insights” và phân đoạn thị trường Quản trị chiến lược trong kỷ nguyên số Tổng quan về chiến lược và quản trị chiến lượcPhân tích và đánh giá môi trường bên ngoài Phân tích môi trường bên trong và khả năng cạnh tranh Các loại hình chiến lược cạnh tranh tổng quát Lựa chọn chiến lượcChiến lược trong môi trường toàn cầu và đa dạng văn hoá  Xây dựng chiến lược doanh nghiệp trong kỷ nguyên AI Thực thi chiến lược Quản trị vận hành nội bộ Quản trị dự án theo chuẩn quốc tế Giới thiệu Môi trường hoạt động của dự ánVai trò của nhà quản lý dự án Quản trị tích hợp dự ánKhía cạnh cơ bản của quản lý dự ánQuản lý tiến độ hiệu quả Quản lý chi phí dự ánQuản lý chất lượngGiao tiếp hiệu quảGiải quyết các rủi roSắp xếp thứ tự ưu tiên và   quản lý hiệu quả lợi ích, kỳ vọng và nhu cầu của các bên liên quanHội thảo chuyên đề quản trị 2",
+          "name": "HK 2",
           "link": "https://drive.google.com/drive/folders/1mEzNGhvVEcM4o8E9q38oqqZ20yHQsYMS?usp=sharing",
           "children": [
             {
-              "name": "Phân tích dữ liệu kinh doanh dựa trên công nghệ và dữ liệuTổng quan về Phân tích dữ liệu kinh doanh Phân tích mô tả Suy luận thống kê Phân tích dự báo Giới thiệu về khai thác dữ liệuPhân tích đề xuất Quản lý rủi ro và ra quyết định Chiến lược doanh nghiệp dựa trên dữ liệu",
+              "name": "Phân tích dữ liệu kinh doanh dựa trên công nghệ và dữ liệu",
               "link": "https://drive.google.com/drive/folders/1mEzNGhvVEcM4o8E9q38oqqZ20yHQsYMS?usp=sharing",
               "children": [
                 {
@@ -1760,7 +1418,7 @@
               ]
             },
             {
-              "name": "Quản trị Marketing và trải nghiệm khách hàng ứng dụng AI Tổng quan về quản trị Marketing trong thời đại số Nghiên cứu Marketing và dự báo nhu cầu Phát triển chiến lược và kế hoạch MarketingXây dựng tài sản thương hiệu (Brand Equity) và Branding  Chiến lược sản phẩm và giá Truyền thông tích hợp (Integrated marketing communications) và đạo đức sử dụng AI Quản trị trải nghiệm khách hàng (CX)Phân tích hành vi người tiêu dụngKhám phá “Insights” và phân đoạn thị trường",
+              "name": "Quản trị Marketing và trải nghiệm khách hàng ứng dụng AI",
               "link": "https://drive.google.com/drive/folders/1a8KJqL4MKA8X4r8Wx_0SVDS9YN6-TRlK?usp=sharing",
               "children": [
                 {
@@ -1793,7 +1451,7 @@
               ]
             },
             {
-              "name": "Quản trị chiến lược trong kỷ nguyên số Tổng quan về chiến lược và quản trị chiến lượcPhân tích và đánh giá môi trường bên ngoài Phân tích môi trường bên trong và khả năng cạnh tranh Các loại hình chiến lược cạnh tranh tổng quát Lựa chọn chiến lượcChiến lược trong môi trường toàn cầu và đa dạng văn hoá  Xây dựng chiến lược doanh nghiệp trong kỷ nguyên AI Thực thi chiến lược Quản trị vận hành nội bộ",
+              "name": "Quản trị chiến lược trong kỷ nguyên số",
               "link": "https://drive.google.com/drive/folders/1RAgnpBDashZmsvEeXuJhMPRqgea88LoZ?usp=sharing",
               "children": [
                 {
@@ -1826,7 +1484,7 @@
               ]
             },
             {
-              "name": "Quản trị dự án theo chuẩn quốc tế Giới thiệu Môi trường hoạt động của dự ánVai trò của nhà quản lý dự án Quản trị tích hợp dự ánKhía cạnh cơ bản của quản lý dự ánQuản lý tiến độ hiệu quả Quản lý chi phí dự ánQuản lý chất lượngGiao tiếp hiệu quảGiải quyết các rủi roSắp xếp thứ tự ưu tiên và   quản lý hiệu quả lợi ích, kỳ vọng và nhu cầu của các bên liên quan",
+              "name": "Quản trị dự án theo chuẩn quốc tế",
               "link": "https://drive.google.com/drive/folders/1uj1OV-anX0JmDaq5REd-22-e8xTuzAbD?usp=sharing",
               "children": [
                 {
@@ -1860,12 +1518,428 @@
                   "name": "Giải quyết các rủi ro"
                 },
                 {
-                  "name": "Sắp xếp thứ tự ưu tiên và   quản lý hiệu quả lợi ích, kỳ vọng và nhu cầu của các bên liên quan"
+                  "name": "Sắp xếp thứ tự ưu tiên và quản lý hiệu quả lợi ích, kỳ vọng và nhu cầu của các bên liên quan"
                 }
               ]
             },
             {
               "name": "Hội thảo chuyên đề quản trị 2"
+            }
+          ]
+        },
+        {
+          "name": "HK 3",
+          "link": "https://drive.google.com/drive/folders/1KAQKRnPf0jtZe1K-_lGZYnZxn_t1B8Cm?usp=sharing",
+          "children": [
+            {
+              "name": "Triết học trong kinh doanh",
+              "children": [
+                {
+                  "name": "Khái luận về Triết học"
+                },
+                {
+                  "name": "Bản thể luận"
+                },
+                {
+                  "name": "Phép biện chứng"
+                },
+                {
+                  "name": "Nhận thức luận"
+                },
+                {
+                  "name": "Học thuyết hình thái Kinh tế - Xã hội"
+                },
+                {
+                  "name": "Triết học chính trị"
+                },
+                {
+                  "name": "Ý thức xã hội"
+                },
+                {
+                  "name": "Triết học về con người"
+                }
+              ]
+            },
+            {
+              "name": "Đạo đức trong kinh doanh",
+              "link": "https://drive.google.com/drive/folders/1KAQKRnPf0jtZe1K-_lGZYnZxn_t1B8Cm?usp=sharing",
+              "children": [
+                {
+                  "name": "Tổng quan về đạo đức trong kinh doanh và quản trị các bên liên quan (Stakeholder)"
+                },
+                {
+                  "name": "Các vấn đề trong đạo đức kinh doanh"
+                },
+                {
+                  "name": "Thể chế hoá đạo đức kinh doanh trong doanh nghiệp"
+                },
+                {
+                  "name": "Mô hình đưa ra quyết định và lãnh đạo đạo đức"
+                },
+                {
+                  "name": "Thuyết đạo đức và giá trị quan (Moral physolophies and Values)"
+                },
+                {
+                  "name": "Xây dựng văn hoá đạo đức trong tổ chức"
+                },
+                {
+                  "name": "Đạo đức trong các chức năng doanh nghiệp"
+                },
+                {
+                  "name": "Triển khai đạo đức trong kinh doanh"
+                },
+                {
+                  "name": "Trách nhiệm xã hội (CSR) và phát triển bền vững"
+                }
+              ]
+            },
+            {
+              "name": "Ra quyết định kinh doanh ứng dụng công nghê",
+              "link": "https://drive.google.com/drive/folders/1IHZeNH_DhrlalsYZu-d_BD3VCIVqeUCx?usp=sharing",
+              "children": [
+                {
+                  "name": "Tổng quan về ra quyết định trong quản trị kinh doanh"
+                },
+                {
+                  "name": "Tư duy phản biện và ra quyết định trong thời đại số:"
+                },
+                {
+                  "name": "Khai phá dữ liệu và phân tích dự đoán trong ra quyết định"
+                },
+                {
+                  "name": "Trí tuệ nhân tạo (AI) và tự động hoá trong việc ra quyết định"
+                },
+                {
+                  "name": "Ra quyết định trong môi trường không chắc chắn và rủi ro"
+                }
+              ]
+            },
+            {
+              "name": "Lãnh đạo thời kỳ chuyển đổi số",
+              "link": "https://drive.google.com/drive/folders/1eYuHc22PFo_b5vyJRyEqifUZsbDBPtfE?usp=sharing",
+              "children": [
+                {
+                  "name": "Giới thiệu về lãnh đạo",
+                  "children": [
+                    {
+                      "name": "Lãnh đạo là gì?"
+                    },
+                    {
+                      "name": "Các quan điểm khác nhau về lãnh đạo"
+                    }
+                  ]
+                },
+                {
+                  "name": "Mô hình hành vi",
+                  "children": [
+                    {
+                      "name": "Các nguyên tắc nền tảng"
+                    },
+                    {
+                      "name": "Hành vi lãnh đạo là gì?"
+                    },
+                    {
+                      "name": "Điểm mạnh và điểm yếu khi áp dụng mô hình này trong tổ chức"
+                    }
+                  ]
+                },
+                {
+                  "name": "Các phong cách lãnh đạo",
+                  "children": [
+                    {
+                      "name": "Sự phát triển và xu hướng"
+                    },
+                    {
+                      "name": "Văn hóa tổ chức"
+                    },
+                    {
+                      "name": "Các yếu tố ảnh hưởng đến phong cách lãnh đạo"
+                    },
+                    {
+                      "name": "Điểm mạnh và điểm yếu"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo theo tình huống",
+                  "children": [
+                    {
+                      "name": "Mô hình lãnh đạo của Hersey và Blanchard"
+                    },
+                    {
+                      "name": "Cách thức hoạt động của mô hình"
+                    },
+                    {
+                      "name": "Thuyết thay thế lãnh đạo"
+                    }
+                  ]
+                },
+                {
+                  "name": "Phong cách lãnh đạo “Charisma’ và lãnh đạo chuyển đổi",
+                  "children": [
+                    {
+                      "name": "Thuyết bản thân của House và Shamir"
+                    },
+                    {
+                      "name": "Thuyết quy kết"
+                    },
+                    {
+                      "name": "Đặc điểm của nhà lãnh đạo “charisma"
+                    },
+                    {
+                      "name": "Các khía cạnh tiêu cực của phong cách “charisma”"
+                    },
+                    {
+                      "name": "Lãnh đạo chuyển đổi"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo đích thực (Authentic leadership)",
+                  "children": [
+                    {
+                      "name": "Vai trò của lãnh đạo đích thực"
+                    },
+                    {
+                      "name": "Phương pháp học tập và thực hành"
+                    },
+                    {
+                      "name": "Pseudo-authenticity"
+                    }
+                  ]
+                },
+                {
+                  "name": "Sự đa dạng và lãnh đạo",
+                  "children": [
+                    {
+                      "name": "Sự đa dạng là gì?"
+                    },
+                    {
+                      "name": "Thuyết bản sắc xã hội"
+                    },
+                    {
+                      "name": "Lãnh đạo và giới tính"
+                    },
+                    {
+                      "name": "Sự đa dạng và văn hóa"
+                    }
+                  ]
+                },
+                {
+                  "name": "Quyền lực, sự ảnh hưởng, và quyền hạn",
+                  "children": [
+                    {
+                      "name": "Quyền lực là gì?"
+                    },
+                    {
+                      "name": "Các dạng của quyền lực"
+                    },
+                    {
+                      "name": "Mặt trái của quyền lực"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo và đội nhóm",
+                  "children": [
+                    {
+                      "name": "Thuyết mô hình nhóm"
+                    },
+                    {
+                      "name": "Mô hình nhóm tiêu chuẩn"
+                    },
+                    {
+                      "name": "Mô hình nhóm mô tả"
+                    },
+                    {
+                      "name": "Mô hình vai trò cá nhân của Bel Belbin"
+                    },
+                    {
+                      "name": "Bánh xe quản lý đội nhóm của Margerison-McCann"
+                    },
+                    {
+                      "name": "Nhược điểm của đội nhóm"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo và sự thay đổi",
+                  "children": [
+                    {
+                      "name": "Tầm nhìn"
+                    },
+                    {
+                      "name": "Cách tiếp cận để thay đổi"
+                    },
+                    {
+                      "name": "Mô hình của quá trình thay đổi"
+                    },
+                    {
+                      "name": "Phản ứng cá nhân đối với thay đổi"
+                    }
+                  ]
+                },
+                {
+                  "name": "Phát triển năng lực lãnh đạo",
+                  "children": [
+                    {
+                      "name": "Năng lực lãnh đạo là gì?"
+                    },
+                    {
+                      "name": "Yếu tố tổ chức"
+                    },
+                    {
+                      "name": "Các nhà lãnh đạo được phát triển như thế nào?"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo chiến lược",
+                  "children": [
+                    {
+                      "name": "Lãnh đạo chiến lược là gì?"
+                    },
+                    {
+                      "name": "Sự cần thiết phải có nhà lãnh đạo chiến lược"
+                    },
+                    {
+                      "name": "Một nhà lãnh đạo chiến lược làm những gì'?"
+                    }
+                  ]
+                },
+                {
+                  "name": "Lãnh đạo chuyển đổi số",
+                  "children": [
+                    {
+                      "name": "Lãnh đạo chuyển đổi số khác lãnh đạo bình thường như thế nào"
+                    },
+                    {
+                      "name": "Vì sao phải chuyển đổi số và vai trò quan trọng của lãnh đạo"
+                    },
+                    {
+                      "name": "Trở ngại lớn nhất có thể gặp phải là gì?"
+                    },
+                    {
+                      "name": "Mô hình lãnh đạo đã thay đổi"
+                    },
+                    {
+                      "name": "Trích xuất lơi ích kinh doanh từ công nghệ"
+                    }
+                  ]
+                },
+                {
+                  "name": "Chiến lược lãnh đạo trong thời kỳ số hóa",
+                  "children": [
+                    {
+                      "name": "Năm phương diện cải tổ doanh nghiệp trong thời đại số"
+                    },
+                    {
+                      "name": "Khai thác mạng lưới khách hàng"
+                    },
+                    {
+                      "name": "Xây dựng nền tảng kỹ thuật số và biến dữ liệu thành tài sản"
+                    },
+                    {
+                      "name": "Xây dựng lộ trình chuyển đổi số"
+                    }
+                  ]
+                },
+                {
+                  "name": "Chuyển đổi số thành công",
+                  "children": [
+                    {
+                      "name": "Đi đến đổi mới thông qua thử nghiệm nhanh"
+                    },
+                    {
+                      "name": "Các lý thuyết và công cụ để tạo ra và làm chủ các mô hình kinh doanh đột phá"
+                    },
+                    {
+                      "name": "Điều chỉnh tuyên bố giá trị"
+                    },
+                    {
+                      "name": "Kinh nghiệm và bài học thực tế của các nhà lãnh đạo kỹ thuật số và những người tham gia"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Hội thảo chuyên đề quản trị 3"
+            }
+          ]
+        },
+        {
+          "name": "HK 4",
+          "link": "https://drive.google.com/drive/folders/1zwglBDdw7yGJ6RyBQSXh-EP0X_dULj_y?usp=sharing",
+          "children": [
+            {
+              "name": "Khởi nghiệp và đổi mới sáng tạo trong kỷ nguyên AI",
+              "link": "https://drive.google.com/drive/folders/1zwglBDdw7yGJ6RyBQSXh-EP0X_dULj_y?usp=sharing",
+              "children": [
+                {
+                  "name": "Bối cảnh của khởi nghiệp và đổi mới thời đại số"
+                },
+                {
+                  "name": "Xác định cơ hội trong khởi nghiệp và đổi mới"
+                },
+                {
+                  "name": "Tìm kiếm nguồn lực cho quá trình đổi mới"
+                },
+                {
+                  "name": "Tạo dựng dự án khởi nghiệp"
+                },
+                {
+                  "name": "Mô hình kinh doanh và tạo dựng giá trị khởi nghiệp"
+                }
+              ]
+            },
+            {
+              "name": "Quản trị bản thân để thành công (Seft-Management for Success)",
+              "children": [
+                {
+                  "name": "Con đường thành công"
+                },
+                {
+                  "name": "Hiểu về não bộ"
+                },
+                {
+                  "name": "Cảm xúc và bản năng"
+                },
+                {
+                  "name": "Tối ưu hóa não bộ"
+                },
+                {
+                  "name": "Kết nối thân tâm"
+                },
+                {
+                  "name": "Bộ não thứ hai"
+                },
+                {
+                  "name": "Dinh dưỡng thông minh"
+                },
+                {
+                  "name": "Lối sống khỏe"
+                },
+                {
+                  "name": "Trình bày nhóm"
+                },
+                {
+                  "name": "Sự hình thành cái tôi"
+                },
+                {
+                  "name": "Kế hoạch hành động"
+                }
+              ]
+            },
+            {
+              "name": "Đề án tốt nghiệp",
+              "link": "https://drive.google.com/drive/folders/1626OqR_BIPkga4WPn5rEzVlm-FVSO9Bn?usp=sharing"
+            },
+            {
+              "name": "Thực tập: Bài tập chuẩn đoán daonh nghiệp"
+            },
+            {
+              "name": "Hội thảo chuyên đề 4"
             }
           ]
         }
@@ -2321,17 +2395,31 @@
           const item = document.createElement("div");
           item.className = "subtopic-item";
           
+          const titleContainer = document.createElement("div");
+          titleContainer.style.display = "flex";
+          titleContainer.style.alignItems = "center";
+          titleContainer.style.gap = "8px";
+          titleContainer.style.overflow = "hidden";
+          titleContainer.style.textOverflow = "ellipsis";
+          
           const title = document.createElement("span");
           title.innerText = getCleanNodeName(child.data.name);
           title.style.fontWeight = "500";
-          item.appendChild(title);
+          titleContainer.appendChild(title);
           
           if (child.data.link) {
             const linkIcon = document.createElement("i");
             linkIcon.className = "fa-solid fa-folder-open";
             linkIcon.style.color = "#10b981";
-            item.appendChild(linkIcon);
+            linkIcon.style.fontSize = "0.8rem";
+            titleContainer.appendChild(linkIcon);
           }
+          
+          item.appendChild(titleContainer);
+          
+          const arrowIcon = document.createElement("i");
+          arrowIcon.className = "fa-solid fa-chevron-right subtopic-arrow";
+          item.appendChild(arrowIcon);
           
           item.onclick = () => {
             // If collapsed, expand
