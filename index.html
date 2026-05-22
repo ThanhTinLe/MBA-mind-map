@@ -935,6 +935,139 @@
     @keyframes spin {
       to { transform: rotate(360deg); }
     }
+
+    .mobile-toggle-btn {
+      display: none;
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      body {
+        position: relative;
+      }
+
+      /* Hide sidebar left on mobile and position absolutely */
+      .sidebar-left {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 290px;
+        z-index: 100;
+        transform: translateX(-100%);
+        box-shadow: 15px 0 50px rgba(0, 0, 0, 0.5);
+      }
+
+      /* Active class to slide in sidebar left */
+      .sidebar-left.active {
+        transform: translateX(0);
+      }
+
+      /* Backdrop overlay when left sidebar is open */
+      .sidebar-left-backdrop {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(6, 8, 19, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 90;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .sidebar-left-backdrop.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* Hamburger menu toggle button style */
+      .mobile-toggle-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--bg-panel);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        font-size: 1.1rem;
+        cursor: pointer;
+        z-index: 80;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .mobile-toggle-btn:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: var(--border-color-glow);
+      }
+
+      .mobile-toggle-btn:active {
+        transform: scale(0.92);
+      }
+
+      /* Relocate help button to make room for toggle button */
+      .help-btn {
+        top: 20px;
+        right: 20px;
+        width: 44px;
+        height: 44px;
+      }
+
+      /* Right Sidebar covers full width on mobile */
+      .sidebar-right {
+        width: 100%;
+        box-shadow: none;
+        z-index: 110; /* Cover everything including mobile-toggle-btn and left sidebar */
+      }
+
+      /* Control panel at the bottom center, more compact */
+      .control-panel {
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 4px;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      }
+
+      .control-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+      }
+
+      /* Landing Page card resize */
+      .landing-card {
+        width: 90%;
+        padding: 30px 20px;
+      }
+      
+      .landing-icon {
+        font-size: 2.6rem;
+      }
+      
+      .landing-title {
+        font-size: 1.35rem;
+      }
+      
+      .landing-desc {
+        font-size: 0.8rem;
+        margin-bottom: 20px;
+      }
+
+      .help-modal-card {
+        width: 90%;
+        padding: 24px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1004,6 +1137,14 @@
   <div class="app-container">
     <!-- Grid Background -->
     <div class="grid-bg"></div>
+
+    <!-- Toggle Sidebar Mobile Button -->
+    <button class="mobile-toggle-btn" id="mobileToggleBtn" title="Danh mục chương trình">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Left Backdrop -->
+    <div class="sidebar-left-backdrop" id="sidebarLeftBackdrop"></div>
 
     <!-- Help floating button -->
     <button class="help-btn" id="helpBtn" title="Trợ giúp & Phím tắt">
@@ -2088,6 +2229,14 @@
       // Hide landing overlay
       document.getElementById('landingOverlay').classList.add('hidden');
 
+      // Hide mobile sidebars when loading new data
+      if (window.innerWidth <= 768) {
+        const sidebarLeft = document.querySelector(".sidebar-left");
+        const sidebarLeftBackdrop = document.getElementById("sidebarLeftBackdrop");
+        if (sidebarLeft) sidebarLeft.classList.remove("active");
+        if (sidebarLeftBackdrop) sidebarLeftBackdrop.classList.remove("active");
+      }
+
       // Initialize hierarchy
       rootNode = d3.hierarchy(hierarchicalData);
       rootNode.x0 = svg.node().getBoundingClientRect().height / 2;
@@ -2565,6 +2714,36 @@
 
     // UI Event listeners
     function setupEventListeners() {
+      // Mobile Left Sidebar Toggle
+      const mobileToggleBtn = document.getElementById("mobileToggleBtn");
+      const sidebarLeftBackdrop = document.getElementById("sidebarLeftBackdrop");
+      const sidebarLeft = document.querySelector(".sidebar-left");
+
+      const toggleSidebarLeft = (show) => {
+        const shouldShow = show !== undefined ? show : !sidebarLeft.classList.contains("active");
+        if (shouldShow) {
+          sidebarLeft.classList.add("active");
+          sidebarLeftBackdrop.classList.add("active");
+        } else {
+          sidebarLeft.classList.remove("active");
+          sidebarLeftBackdrop.classList.remove("active");
+        }
+      };
+
+      if (mobileToggleBtn) {
+        mobileToggleBtn.addEventListener("click", () => toggleSidebarLeft());
+      }
+      if (sidebarLeftBackdrop) {
+        sidebarLeftBackdrop.addEventListener("click", () => toggleSidebarLeft(false));
+      }
+
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 768) {
+          if (sidebarLeft) sidebarLeft.classList.remove("active");
+          if (sidebarLeftBackdrop) sidebarLeftBackdrop.classList.remove("active");
+        }
+      });
+
       // Zoom buttons
       document.getElementById("zoomInBtn").addEventListener("click", () => {
         svg.transition().duration(250).call(d3Zoom.scaleBy, 1.3);
@@ -2604,6 +2783,9 @@
           // Close panels / reset zoom
           helpModal.classList.remove("active");
           document.getElementById("sidebarRight").classList.remove("active");
+          if (window.innerWidth <= 768) {
+            toggleSidebarLeft(false);
+          }
           zoomToFit();
         }
         
@@ -2621,6 +2803,9 @@
           if (target === 'root') {
             centerOnNode(rootNode);
             selectNode(rootNode);
+            if (window.innerWidth <= 768) {
+              toggleSidebarLeft(false);
+            }
             return;
           }
           
@@ -2636,6 +2821,9 @@
             updateMindmap(rootNode);
             centerOnNode(match);
             selectNode(match);
+          }
+          if (window.innerWidth <= 768) {
+            toggleSidebarLeft(false);
           }
         });
       });
